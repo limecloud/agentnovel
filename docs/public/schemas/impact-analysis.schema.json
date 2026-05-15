@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/impact-analysis.schema.json",
+  "title": "Novel Impact Analysis",
+  "type": "object",
+  "required": [
+    "impactId",
+    "projectId",
+    "mode",
+    "authorIntent",
+    "sourceChange",
+    "riskLevel",
+    "affectedRefs",
+    "recommendations"
+  ],
+  "properties": {
+    "impactId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "timeline"
+      ]
+    },
+    "authorIntent": {
+      "type": "string"
+    },
+    "sourceChange": {
+      "type": "string"
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "blocking"
+      ]
+    },
+    "affectedRefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ref",
+          "impact"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string"
+          },
+          "requiredAction": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

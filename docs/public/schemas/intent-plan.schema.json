@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/intent-plan.schema.json",
+  "title": "Novel Intent Plan",
+  "type": "object",
+  "required": [
+    "planId",
+    "projectId",
+    "mode",
+    "authorIntent",
+    "options"
+  ],
+  "properties": {
+    "planId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "timeline"
+      ]
+    },
+    "authorIntent": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "optionId",
+          "label",
+          "summary",
+          "edits",
+          "benefits",
+          "costs",
+          "risks"
+        ],
+        "properties": {
+          "optionId": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "edits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "costs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "impactRef": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "decision": {
+      "type": "object",
+      "properties": {
+        "selectedOptionId": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "rejectedOptionIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

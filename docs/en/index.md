@@ -17,9 +17,9 @@ hero:
 
 features:
   - title: Writing-grounded
-    details: "Chapters, scenes, continuity, character state, foreshadowing, revision and publishing."
+    details: "Chapters, scenes, continuity, character state, foreshadowing, revision, publishing and Harness diagnostics."
   - title: Implementation-grounded
-    details: "Aligned with Lime Novel surfaces, runtime tools, AgentFeed and diagnostics."
+    details: "Aligned with Lime Novel surfaces, runtime tools, AgentFeed, diagnostics and Novel Harness Engine contracts."
 ---
 
 ## Main links

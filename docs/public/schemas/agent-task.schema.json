@@ -15,13 +15,14 @@
     "surface": {
       "type": "string",
       "enum": [
-        "home",
-        "writing",
-        "canon",
-        "knowledge",
         "analysis",
+        "canon",
+        "feature-center",
+        "home",
+        "knowledge",
+        "publish",
         "revision",
-        "publish"
+        "writing"
       ]
     },
     "intent": {
@@ -55,6 +56,28 @@
     "metadata": {
       "type": "object",
       "additionalProperties": true
+    },
+    "taskType": {
+      "type": "string",
+      "enum": [
+        "write_chapter",
+        "rewrite_selection",
+        "extract_canon",
+        "answer_knowledge",
+        "diagnose_story",
+        "simulate_impact",
+        "create_intent_plan",
+        "map_reader_feedback",
+        "plan_timeline_iteration",
+        "prepare_publish"
+      ]
+    },
+    "harnessMode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "timeline"
+      ]
     }
   },
   "additionalProperties": true

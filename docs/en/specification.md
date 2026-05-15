@@ -1,11 +1,11 @@
 ---
 title: Specification
-description: Agent Novel v0.1.1 draft specification summary.
+description: Agent Novel v0.1.2 draft specification summary.
 ---
 
 # Specification
 
-Agent Novel v0.1.1 is a draft standard for agent-native long-form fiction writing workspaces. The normative detail is maintained in Simplified Chinese; this page summarizes the core contract.
+Agent Novel v0.1.2 is a draft standard for agent-native long-form fiction writing workspaces. The normative detail is maintained in Simplified Chinese; this page summarizes the core contract.
 
 ## Core idea
 
@@ -13,6 +13,8 @@ Agent Novel is not a prompt collection. It defines how a novel project is contin
 
 ```text
 source material -> information -> knowledge -> insight -> judgment -> impact
+
+Novel Harness Engine adds a steering layer for sandbox diagnostics, timeline repair, impact analysis and reader feedback mapping. Harness outputs are reports, options, issues and proposals; they do not bypass author approval or manuscript writeback rules.
 ```
 
 ## Implementation-grounded baseline

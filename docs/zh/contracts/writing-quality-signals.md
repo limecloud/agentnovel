@@ -20,6 +20,10 @@ Agent Novel 不规定文学审美，但规定长篇小说代理应该能结构�
 | 情绪跳变 | 角色情绪转折缺少触发。 | local rewrite proposal。 |
 | 语言漂移 | 叙述声音或角色台词突然变味。 | style proposal。 |
 | 发布阻断 | 缺章、标题缺失、未解决高风险问题。 | publish blocker。 |
+| 黄金三章弱 | 开局缺少钩子、主角共鸣、世界沉浸或继续阅读动机。 | diagnostic report + sandbox intent plan。 |
+| 冲击波过大 | 局部改动会破坏后续反转、伏笔或人物可信度。 | impact analysis + 多方案比较。 |
+| 读者预期失配 | 评论或弃读信号集中指向承诺与兑现不一致。 | reader feedback mapping + timeline iteration。 |
+| 时间线篡改风险 | 发布后试图回改已发布事实。 | blocking issue + future fix。 |
 
 ## 输出要求
 
@@ -27,6 +31,13 @@ Agent Novel 不规定文学审美，但规定长篇小说代理应该能结构�
 
 - target：章节、场景、段落或设定卡。
 - evidence：原文或来源引用。
-- severity：low / medium / high。
+- severity：low / medium / high / blocking。
 - impact：影响读者理解、悬念、人物可信度或发布。
-- suggestedAction：生成 proposal、更新 canon、延后处理或直接忽略。
+- suggestedAction：生成 proposal、更新 canon、运行冲击波分析、进入 timeline iteration、延后处理或直接忽略。
+
+## Harness 质量门槛
+
+- 发现必须能落到具体章节、场景、设定卡、人物状态或读者反馈来源。
+- 高风险结构改动必须先生成冲击波分析。
+- 发布后问题默认转为未来章节修复，不直接回改已发布章节。
+- 黄金三章评估必须分别判断钩子、主角共鸣、世界沉浸和继续阅读动机。

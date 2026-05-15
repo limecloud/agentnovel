@@ -57,6 +57,32 @@
     },
     "undoneAt": {
       "type": "string"
+    },
+    "harnessMode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "timeline"
+      ]
+    },
+    "authorIntent": {
+      "type": "string"
+    },
+    "candidatePlans": {
+      "type": "array",
+      "items": {
+        "$ref": "https://limecloud.github.io/agentnovel/schemas/intent-plan.schema.json"
+      }
+    },
+    "selectedPlan": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "impactAnalysis": {
+      "$ref": "https://limecloud.github.io/agentnovel/schemas/impact-analysis.schema.json"
+    },
+    "readerExperienceRisk": {
+      "type": "string"
     }
   },
   "additionalProperties": true

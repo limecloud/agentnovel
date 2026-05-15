@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/reader-feedback.schema.json",
+  "title": "Reader Feedback Mapping",
+  "type": "object",
+  "required": [
+    "feedbackId",
+    "projectId",
+    "source",
+    "collectedAt",
+    "items",
+    "mappings"
+  ],
+  "properties": {
+    "feedbackId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "collectedAt": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "itemId",
+          "summary"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "sentiment": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "neutral",
+              "negative",
+              "mixed"
+            ]
+          },
+          "sourceRef": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "targetRefs",
+          "interpretation"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "chapter",
+              "character",
+              "pacing",
+              "canon",
+              "foreshadowing",
+              "expectation",
+              "publish"
+            ]
+          },
+          "targetRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "interpretation": {
+            "type": "string"
+          },
+          "recommendedAction": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

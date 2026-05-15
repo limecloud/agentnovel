@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/timeline-iteration.schema.json",
+  "title": "Timeline Iteration Plan",
+  "type": "object",
+  "required": [
+    "iterationId",
+    "projectId",
+    "trigger",
+    "strategy",
+    "targetFutureRefs",
+    "readOnlyPublishedRefs"
+  ],
+  "properties": {
+    "iterationId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "trigger": {
+      "type": "string"
+    },
+    "strategy": {
+      "type": "string",
+      "enum": [
+        "retroactive-echo",
+        "future-bridge",
+        "foreshadowing-recovery",
+        "character-reframing",
+        "reader-expectation-reset"
+      ]
+    },
+    "targetFutureRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "readOnlyPublishedRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "readerExperienceRisk": {
+      "type": "string"
+    },
+    "retconRisk": {
+      "type": "string",
+      "enum": [
+        "none",
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "proposalRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

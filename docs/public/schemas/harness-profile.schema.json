@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/harness-profile.schema.json",
+  "title": "Novel Harness Profile",
+  "type": "object",
+  "required": [
+    "profileId",
+    "projectId",
+    "mode",
+    "layers"
+  ],
+  "properties": {
+    "profileId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "timeline"
+      ]
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "story",
+          "character",
+          "reader"
+        ]
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "publishedChapterRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

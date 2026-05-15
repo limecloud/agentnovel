@@ -105,6 +105,40 @@
         },
         "additionalProperties": true
       }
+    },
+    "lifecycle": {
+      "type": "object",
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "sandbox",
+            "timeline"
+          ]
+        },
+        "publishedChapterRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lockedChapterRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "switchedAt": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "harnessProfile": {
+      "$ref": "https://limecloud.github.io/agentnovel/schemas/harness-profile.schema.json"
     }
   },
   "$defs": {
@@ -180,6 +214,9 @@
           "items": {
             "$ref": "#/$defs/scene"
           }
+        },
+        "publishedAt": {
+          "type": "string"
         }
       },
       "additionalProperties": true

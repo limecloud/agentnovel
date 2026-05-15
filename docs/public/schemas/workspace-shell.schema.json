@@ -61,6 +61,27 @@
       "items": {
         "$ref": "https://limecloud.github.io/agentnovel/schemas/agent-feed-item.schema.json"
       }
+    },
+    "harnessProfile": {
+      "$ref": "https://limecloud.github.io/agentnovel/schemas/harness-profile.schema.json"
+    },
+    "diagnosticReports": {
+      "type": "array",
+      "items": {
+        "$ref": "https://limecloud.github.io/agentnovel/schemas/diagnostic-report.schema.json"
+      }
+    },
+    "impactAnalyses": {
+      "type": "array",
+      "items": {
+        "$ref": "https://limecloud.github.io/agentnovel/schemas/impact-analysis.schema.json"
+      }
+    },
+    "readerFeedback": {
+      "type": "array",
+      "items": {
+        "$ref": "https://limecloud.github.io/agentnovel/schemas/reader-feedback.schema.json"
+      }
     }
   },
   "additionalProperties": true

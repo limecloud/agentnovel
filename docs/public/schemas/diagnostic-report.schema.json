@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/diagnostic-report.schema.json",
+  "title": "Novel Diagnostic Report",
+  "type": "object",
+  "required": [
+    "reportId",
+    "projectId",
+    "mode",
+    "scope",
+    "generatedAt",
+    "summary",
+    "findings"
+  ],
+  "properties": {
+    "reportId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "timeline"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "targetRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "goldenThree": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "findingId",
+          "area",
+          "severity",
+          "targetRefs",
+          "diagnosis",
+          "recommendation"
+        ],
+        "properties": {
+          "findingId": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string",
+            "enum": [
+              "structure",
+              "pacing",
+              "character",
+              "foreshadowing",
+              "info-gap",
+              "continuity",
+              "golden-three",
+              "worldbuilding",
+              "reader-risk",
+              "publishing"
+            ]
+          },
+          "harnessLayer": {
+            "type": "string",
+            "enum": [
+              "story",
+              "character",
+              "reader"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "blocking"
+            ]
+          },
+          "targetRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "diagnosis": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

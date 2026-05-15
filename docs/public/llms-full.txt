@@ -1,12 +1,14 @@
-# Agent Novel v0.1.1 LLM Full Context
+# Agent Novel v0.1.2 LLM Full Context
 
 
 <!-- Source: README.md -->
 # Agent Novel
 
-Agent Novel 是面向长篇小说 AI Agent 产品的工作台标准。它不是“写作提示词集合”，也不是“泛 Agent 标准换皮”，而是从 `lime-novel` 的真实产品设计、技术实现、运行时工具和小说写作闭环中抽象出来的协议：如何让一部小说在本地持续积累记忆、持续推进章节、持续沉淀设定、持续发现问题，最后稳定导出发布。
+Agent Novel 是面向长篇小说 AI Agent 产品的工作台与小说驾驭工程标准。它不是“写作提示词集合”，也不是“泛 Agent 标准换皮”，而是从 `lime-novel` 的真实产品设计、技术实现、运行时工具和小说写作闭环中抽象出来的协议：如何让一部小说在本地持续积累记忆、持续推进章节、持续沉淀设定、持续发现问题，最后稳定导出发布。
 
-一句话：Agent Novel 的目标不是“帮作者写一段”，而是“陪作者把一部小说持续写完、修完、发出去”。
+一句话：Agent Novel 的目标不是“帮作者写一段”，而是“让作者驾驭一部长篇：持续写完、修完、发出去，并在发布后继续通过未来章节修复读者体验”。
+
+`Novel Harness Engine / 小说驾驭引擎` 是 v0.1.2 的核心新增层。这里的 `Harness` 取“马具、驾驭、约束执行框架、可观测控制壳”之义：把作者意图、故事骨架、人物弧光、伏笔链、节奏、读者反馈和发布约束连接起来，让作者牵引复杂长篇，而不是被复杂性拖着跑。
 
 ## 核心边界
 
@@ -15,12 +17,13 @@ Agent Novel 是面向长篇小说 AI Agent 产品的工作台标准。它不是�
 | 小说工作台 | 首页、写作、知识、拆书、设定、修订、发布这些小说专用工作面语义。 | 具体 React 组件库和视觉样式。 |
 | 作品资产 | `novel.json`、正文、场景、设定、知识编译、修订、导出产物的文件协议。 | 云同步、多租户账户、远端协作。 |
 | 创作闭环 | 章节目标、场景推进、人物状态、伏笔、信息差、连续性和发布预检。 | 单次 prompt 模板或通用聊天格式。 |
+| 小说驾驭引擎 | Story/Character/Reader Harness、沙盘模式、时间线模式、小说体检、冲击波分析、读者反馈映射。 | 替作者决定故事方向或自动覆盖正文。 |
 | 代理协作 | 项目总控、章节、知识、拆书、设定、修订、发布代理的任务边界。 | 模型 provider API 的完整封装。 |
 | 回写安全 | proposal、evidence、issue、approval、diff、applied record。 | 直接执行任意来源文本或绕过作者确认。 |
 
 ## 来自 `lime-novel` 的事实
 
-本标准 v0.1.1 对齐当前 `lime-novel` 已实现和已文档化事实：
+本标准 v0.1.2 继续对齐当前 `lime-novel` 已实现和已文档化事实，并加入 Novel Harness Engine 作为结构驾驭层：
 
 - 产品原则：项目优先、正文优先、连续性优先、结果可回写、低打扰优先。
 - 工作面：`home`、`writing`、`knowledge`、`feature-center/analysis`、`canon`、`revision`、`publish`。
@@ -29,6 +32,7 @@ Agent Novel 是面向长篇小说 AI Agent 产品的工作台标准。它不是�
 - 工具：读取工作区、读取章节、搜索、读知识页、生成知识回答、保存正文提议、写入候选设定、写入修订问题、提交任务结果。
 - 数据：`novel.json` 中的 `volumes`、`chapters[].objective`、`chapters[].scenes`、`homeHighlights`、`quickActions`。
 - 产物：知识导入到 `raw/research`，问答写入 `outputs/`，发布导出 Markdown/EPUB 与 manifest。
+- 驾驭工程：发布前使用 `sandbox` 做全本沙盘诊断与重构，发布后使用 `timeline` 尊重已发布章节不可逆性，通过未来章节修复体验。
 
 ## 推荐项目形态
 
@@ -78,6 +82,12 @@ my-novel/
 - [中文规范](docs/zh/specification.md)
 - [长篇写作闭环](docs/zh/authoring/long-form-writing-loop.md)
 - [章节与场景模型](docs/zh/contracts/chapter-scene-model.md)
+- [小说驾驭引擎](docs/zh/concepts/novel-harness-engine.md)
+- [沙盘 Harness](docs/zh/contracts/sandbox-harness.md)
+- [时间线 Harness](docs/zh/contracts/timeline-harness.md)
+- [小说体检报告](docs/zh/contracts/diagnostic-report.md)
+- [冲击波分析](docs/zh/contracts/impact-analysis.md)
+- [读者反馈闭环](docs/zh/contracts/reader-feedback-loop.md)
 - [知识编译层](docs/zh/contracts/knowledge-compilation.md)
 - [Live Agent Runtime](docs/zh/contracts/live-agent-runtime.md)
 - [运行时工具契约](docs/zh/contracts/runtime-tools.md)
@@ -100,24 +110,89 @@ npm run build
 
 ## Status
 
-当前版本：`v0.1.1`。本版本重心是把 `lime-novel` 的真实产品/运行时/写作流程提升为标准语言。`v0.1.0` 保留为初始草案，不改写历史 tag。
+当前版本：`v0.1.2`。本版本重心是加入 `Novel Harness Engine / 小说驾驭引擎`：把发布前沙盘、发布后时间线、小说体检、冲击波分析和读者反馈映射纳入标准。`v0.1.0` 与 `v0.1.1` 保留为历史版本，不改写历史 tag。
+
+
+<!-- Source: docs/zh/what-is-agent-novel.md -->
+---
+title: 什么是 Agent Novel？
+description: Agent Novel 是面向长篇小说 Agent 产品的文件优先工作台和小说驾驭工程标准。
+---
+
+# 什么是 Agent Novel？
+
+Agent Novel 定义一种面向 AI Agent 的长篇小说工作台和小说驾驭工程标准。它关注的不是“如何写一句更好的提示词”，而是一个长篇项目如何被保存、理解、诊断、修订、发布、审计和持续协作。v0.1.2 增加 `Novel Harness Engine / 小说驾驭引擎`，用于把故事骨架、人物弧光、读者体验和发布后时间线纳入可控框架。
+
+适用场景：
+
+- 长篇小说、系列小说和共享宇宙创作。
+- 需要章节推进、设定沉淀、连续性检查和发布整理的写作产品。
+- 本地优先、文件可迁移、Agent 可读写的创作工具。
+- 希望把 AI 结果从聊天气泡升级为可审批、可回写资产的系统。
+- 需要发布前沙盘诊断、发布后读者反馈映射和未来章节补强的连载系统。
+
+不适用场景：
+
+- 单次短文生成。
+- 只有 prompt 模板、没有项目资产模型的写作助手。
+- 把 Agent 运行时、技能脚本或模型 provider 直接塞进作品目录的系统。
+
+## 核心判断
+
+Agent Novel 的核心判断是：长篇小说是长期演进的作品系统，不是一次模型调用。
+
+因此标准必须把下面对象分开：
+
+| 对象 | 角色 |
+| --- | --- |
+| 正文 | 作者最终接受的章节与场景内容。 |
+| 设定 | 角色、地点、组织、规则、时间线等连续性事实。 |
+| 参考 | 外部素材、拆书样本、研究资料和导入文档。 |
+| 修订 | 问题、提议、差异、应用记录和撤销记录。 |
+| 发布 | Markdown、EPUB、包清单和导出诊断。 |
+| 代理任务 | 后台工作单元，不等于作品事实。 |
+| 证据 | 支撑建议、诊断和回写的来源片段。 |
+| Harness | 沙盘模式、时间线模式、小说体检、冲击波分析和读者反馈映射。 |
+
+## 与 Agent Skills 和 Agent Knowledge 的边界
+
+| 内容 | 正确位置 | 原因 |
+| --- | --- | --- |
+| 如何拆书、如何续写、如何做连续性检查 | Agent Skills | 这是流程和能力。 |
+| 拆书后的样本摘要、研究事实、风格观察 | Agent Knowledge 或 Novel references | 这是可引用知识。 |
+| 小说项目目录、章节正文、设定卡和修订记录 | Agent Novel | 这是作品工作台协议。 |
+| 工具调用、队列、错误、恢复和事件流 | Agent Runtime | 这是执行事实。 |
+| 任务卡、证据卡、提议块和差异预览 | Agent UI | 这是可见交互投影。 |
+
+## 运行时原则
+
+兼容实现 SHOULD：
+
+1. 优先读取项目文件而不是聊天历史。
+2. 在模型调用前组装最小必要上下文。
+3. 把 AI 输出保存为提议，而不是直接覆盖正文或设定。
+4. 在结构修改前生成冲击波分析。
+5. 为有风险写入提供证据、差异和人工确认。
+6. 发布后尊重已发布章节不可逆边界。
+7. 保持索引、缓存和 embedding 可重建。
+8. 让作者随时能备份、迁移和审查自己的作品资产。
 
 
 <!-- Source: docs/zh/specification.md -->
 ---
 title: 规范
-description: Agent Novel v0.1.1 深度草案规范。
+description: Agent Novel v0.1.2 小说驾驭工程规范。
 ---
 
 # 规范
 
 Agent Novel 是长篇小说 Agent 工作台标准。它定义一部小说如何以项目为单位被持续创作、持续记忆、持续修订、持续导出，而不是把创作过程压扁成一次聊天或一组 prompt。
 
-v0.1.1 的标准事实来自 `lime-novel` 当前产品文档、技术文档、运行时代码和 demo 项目：左侧小说工作面、右侧 AI Agent 协作栏、项目目录、知识编译层、单代理 live runtime、结构化工具结果、提议回写和发布导出闭环。
+v0.1.2 的标准事实来自 `lime-novel` 当前产品文档、技术文档、运行时代码和 demo 项目：左侧小说工作面、右侧 AI Agent 协作栏、项目目录、知识编译层、单代理 live runtime、结构化工具结果、提议回写和发布导出闭环；新增 Novel Harness Engine，用于发布前沙盘诊断、发布后时间线迭代、小说体检、冲击波分析和读者反馈映射。
 
 ## 1. 核心定义
 
-Agent Novel 标准化六件事：
+Agent Novel 标准化七件事：
 
 | 范畴 | 标准问题 |
 | --- | --- |
@@ -127,6 +202,7 @@ Agent Novel 标准化六件事：
 | 代理协作 | 项目总控、章节、知识、拆书、设定、修订、发布代理如何分工？ |
 | 回写安全 | AI 结果如何先形成 proposal、evidence、issue、approval，再由作者应用？ |
 | UI 投影 | 工作面如何展示任务、证据、提议、差异、审批和诊断？ |
+| 小说驾驭 | 作者如何用 Harness 控制故事骨架、人物弧光、读者体验和发布后时间线？ |
 
 ## 2. 非目标
 
@@ -154,6 +230,7 @@ Agent Novel 不标准化：
 | 提议先行 | 正文和设定修改先成为 proposal，不能静默覆盖。 |
 | 低打扰优先 | 后台代理以任务卡和结果卡回流，不抢写作焦点。 |
 | 本地优先 | 作者资产默认落在可见、可备份、可迁移的本地文件中。 |
+| 可驾驭优先 | AI 必须帮助作者看见结构、比较方案、模拟影响，而不是替作者篡改作品。 |
 
 ## 4. 工作面与代理
 
@@ -185,11 +262,57 @@ Agent Novel SHOULD 把小说从素材推进到影响：
 | 素材 | raw、灵感、草稿、研究资料 | `raw/research/clocktower.md` |
 | 信息 | 章节摘要、场景目标、人物状态 | chapter objective、scene goal |
 | 知识 | canon card、compiled entity、timeline | `canon/characters/lin.md` |
-| 洞察 | 连续性问题、节奏问题、视角越界 | revision issue |
-| 判断 | 修订优先级、改写策略、发布确认 | approval / proposal |
+| 洞察 | 连续性问题、节奏问题、视角越界、读者反馈风险 | revision issue / diagnostic report |
+| 判断 | 修订优先级、改写策略、发布确认、Harness 方案选择 | approval / proposal / intent plan |
 | 影响 | 成稿、导出、读者反馈、连载资产 | `exports/*/manifest.json` |
 
-## 6. 项目包
+
+## 6. Novel Harness Engine
+
+`Novel Harness Engine / 小说驾驭引擎` 是 v0.1.2 新增的结构驾驭层。`Harness` 取“马具、驾驭、约束执行框架、可观测控制壳”之义：把作者意图、故事骨架、人物弧光、读者反馈和发布约束连接起来。
+
+Harness 的目标不是自动写作，而是帮助作者完成：
+
+| 能力 | 标准含义 |
+| --- | --- |
+| 看见骨架 | 主线、支线、章节序列、冲突推进和信息释放可检查。 |
+| 看见内脏 | 人物状态、伏笔链、世界规则和读者预期可追踪。 |
+| 模拟改动 | 结构修改前先生成冲击波分析。 |
+| 比较方案 | 作者意图先转为 A/B/C 方案，再由作者选择。 |
+| 尊重时间线 | 发布后已发布章节只读，通过未来章节修复体验。 |
+
+### 6.1 三层 Harness
+
+| 层 | 驾驭对象 | 典型输出 |
+| --- | --- | --- |
+| Story Harness | 主线、卷册、章节、场景、信息差、伏笔链 | 结构 finding、章节重排方案、伏笔回收计划 |
+| Character Harness | 目标、信念、关系、能力、创伤、转折 | 人物状态机、弧光问题、关系推进 proposal |
+| Reader Harness | 黄金三章、爽点、节奏、悬念、评论反馈、弃读风险 | 读者风险、回潮声明、timeline iteration |
+
+### 6.2 生命周期模式
+
+| 模式 | 阶段 | 权限 | 典型动作 |
+| --- | --- | --- | --- |
+| `sandbox` | 发布前 | 可重构、可重排、可重挂伏笔 | 全本体检、黄金三章评估、A/B/C 重构方案 |
+| `timeline` | 发布后 | 已发布章节只读，未来章节可写 | 读者反馈映射、回潮声明、未来章节补强 |
+
+兼容实现 MUST 在项目级区分 `sandbox` 和 `timeline`。发布后不能把已发布章节当普通草稿静默改写。
+
+### 6.3 Harness 输出边界
+
+Harness 可以生成：
+
+- diagnostic report。
+- impact analysis。
+- intent plan。
+- reader feedback mapping。
+- timeline iteration。
+- revision issue。
+- proposal draft。
+
+Harness 不可以绕过 proposal/apply、approval 或 publish policy 直接修改正文事实源。
+
+## 7. 项目包
 
 推荐目录：
 
@@ -217,7 +340,7 @@ my-novel/
 6. `exports` 是发布产物，不反向覆盖正文。
 7. `.lime` 是运行支撑，索引、embedding、cache 应尽量可重建。
 
-## 7. `novel.json`
+## 8. `novel.json`
 
 `novel.json` MUST 至少包含：
 
@@ -230,13 +353,13 @@ my-novel/
 | `currentChapterId` | 当前章节焦点。 |
 | `chapters` | 章节索引。 |
 
-SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`、`currentFeatureTool`、`publishState`、`volumes`、`homeHighlights`、`quickActions`。
+SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`、`currentFeatureTool`、`publishState`、`lifecycle`、`harnessProfile`、`volumes`、`homeHighlights`、`quickActions`。
 
-章节条目 SHOULD 包含：`chapterId`、`file`、`volumeId`、`order`、`title`、`summary`、`status`、`wordCount`、`objective`、`lastEditedAt`、`scenes`。
+章节条目 SHOULD 包含：`chapterId`、`file`、`volumeId`、`order`、`title`、`summary`、`status`、`wordCount`、`objective`、`lastEditedAt`、`publishedAt`、`scenes`。
 
 场景条目 SHOULD 包含：`sceneId`、`order`、`title`、`goal`、`status`。
 
-## 8. 章节、场景与写作动作
+## 9. 章节、场景与写作动作
 
 章节不是一个 Markdown 文件名，而是一个可持续推进的创作单元：
 
@@ -248,7 +371,7 @@ SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`�
 
 写作代理输出正文时，MUST 先保存完整提议或 patch，并通过 proposal card 交给作者确认。标准不允许“模型文本即正文”。
 
-## 9. 设定、知识与记忆
+## 10. 设定、知识与记忆
 
 长篇小说至少需要三层记忆：
 
@@ -267,7 +390,7 @@ SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`�
 - 回写 canon 或 revision。
 - 作为后续写作和修订的长期上下文。
 
-## 10. 代理运行时
+## 11. 代理运行时
 
 兼容 runtime SHOULD 支持：
 
@@ -278,7 +401,7 @@ SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`�
 - 失败诚实：模型调用失败、工具失败、结构化输出缺失时标记 failed，不伪造成功。
 - 诊断持久化：trace、toolEvents、stats、failure 可读取。
 
-## 11. 工具层
+## 12. 工具层
 
 标准工具族：
 
@@ -293,8 +416,13 @@ SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`�
 | `upsert_canon_candidate` | propose | 写入或更新候选设定卡。 |
 | `upsert_revision_issue` | propose | 写入或更新修订问题。 |
 | `submit_task_result` | result | 提交最终结构化任务结果。 |
+| `generate_diagnostic_report` | propose/write-output | 生成小说体检报告。 |
+| `simulate_impact` | propose/write-output | 生成结构改动冲击波分析。 |
+| `create_intent_plan` | propose | 将作者意图转成 A/B/C 候选方案。 |
+| `map_reader_feedback` | propose/write-output | 将读者反馈映射到章节、人物、节奏、伏笔或发布风险。 |
+| `plan_timeline_iteration` | propose | 在 timeline 模式下生成未来章节修复策略。 |
 
-## 12. 结构化结果
+## 13. 结构化结果
 
 任务对 UI 回流的最小单位不是 assistant 文本，而是 artifact/feed item：
 
@@ -305,10 +433,12 @@ SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`�
 | `proposal` | 可应用提议，通常带 `proposalId` 和 `diffPreview`。 |
 | `issue` | 修订问题或风险发现。 |
 | `approval` | 需要作者确认的动作。 |
+| `report` | 体检报告、读者反馈聚合或发布前检查。 |
+| `impact` | 结构改动的冲击波范围和风险。 |
 
 Feed item SHOULD 支持 `supportingLabel`、`severity`、`approvalStatus`、`linkedIssueId`、`actions`。
 
-## 13. UI 投影
+## 14. UI 投影
 
 UI 必须区分三类状态：
 
@@ -320,7 +450,7 @@ UI 必须区分三类状态：
 
 右栏 `建议` 与 `对话` 是同一任务流的两种投影，不是两套状态。聊天内容不能绕过 proposal/apply 流程成为作品事实。
 
-## 14. 修订闭环
+## 15. 修订闭环
 
 修订不是模型批评文本，而是可处理的问题队列：
 
@@ -328,11 +458,13 @@ UI 必须区分三类状态：
 发现问题 -> 写入 issue -> 生成 proposal -> 展示 diff/evidence -> 作者应用/拒绝 -> applied record / undo
 ```
 
-Issue 应能表达连续性、视角、节奏、风格、逻辑、发布阻断等类型；severity 至少支持 low/medium/high；状态至少支持 open/deferred/resolved。
+Issue 应能表达连续性、视角、节奏、风格、逻辑、发布阻断、读者反馈风险、伏笔断裂、人物弧光失真等类型；severity 至少支持 low/medium/high/blocking；状态至少支持 open/deferred/resolved。
 
-## 15. 发布闭环
+Harness-driven 修订必须遵循：作者意图 -> 候选方案 -> 冲击波分析 -> 作者确认 -> proposal/apply -> revision record。
 
-发布不是“导出一个文件”，而是：
+## 16. 发布闭环
+
+发布不是“导出一个文件”，而是从 sandbox 进入 timeline 的边界动作：
 
 1. 选择预设：Markdown 或 EPUB 等。
 2. 生成平台简介和发布备注草案。
@@ -340,10 +472,12 @@ Issue 应能表达连续性、视角、节奏、风格、逻辑、发布阻断�
 4. 作者最终确认。
 5. 生成正文包、简介、备注、平台反馈和 manifest。
 6. 记录最近两次导出差异。
+7. 锁定已发布章节范围，切换为 timeline 只读边界。
+8. 将后续评论和反馈导入 reader feedback loop。
 
 外部发布、同步或生产 API 调用必须进入 Agent Policy / approval 流程。
 
-## 16. 安全边界
+## 17. 安全边界
 
 - Renderer 不直接访问文件系统、密钥和原始 IPC。
 - Preload 只暴露 typed API。
@@ -351,14 +485,140 @@ Issue 应能表达连续性、视角、节奏、风格、逻辑、发布阻断�
 - 来源材料和知识包中的指令必须当数据，不能覆盖系统或工具规则。
 - 高风险动作必须展示影响范围、风险、证据、diff 和撤销策略。
 
-## 17. 一致性级别
+## 18. 一致性级别
 
 | 级别 | 要求 |
 | --- | --- |
 | `reader` | 读取 `novel.json`、章节、设定、知识和导出清单。 |
 | `workspace` | 提供小说工作面和右栏投影。 |
 | `agent-ready` | 支持工具、proposal、issue、approval、diagnostics。 |
-| `full` | 支持知识编译、导出 manifest、schema 校验、Pages/LLM 文档入口。 |
+| `full` | 支持知识编译、导出 manifest、schema 校验、Harness report/impact/feedback、Pages/LLM 文档入口。 |
+
+
+<!-- Source: docs/zh/concepts/novel-harness-engine.md -->
+---
+title: 小说驾驭引擎
+description: Novel Harness Engine 的定义、边界和三层 Harness 架构。
+---
+
+# 小说驾驭引擎
+
+`Novel Harness Engine / 小说驾驭引擎` 是 Agent Novel v0.1.2 的核心概念。它不是一个写作模型、一个提示词包或一个自动改稿按钮，而是一套让作者驾驭长篇复杂性的工程层。
+
+`Harness` 在这里保留三重含义：
+
+| 含义 | 对小说系统的映射 |
+| --- | --- |
+| 马具 / 挽具 | 把创作冲动、故事骨架、人物弧光和读者反馈套进可牵引的结构。 |
+| 驾驭 / 利用 | 作者不是被剧情复杂度拖走，而是能控制节奏、信息释放和修订方向。 |
+| 执行框架 / 控制壳 | 每次诊断、模拟、修订、发布都留下输入、证据、方案、风险和决策记录。 |
+
+`Forge` 不是主隐喻。它表示构建、调校、验证 Harness 的工作台：作者在这里给作品装上可控的牵引结构。
+
+## 1. 产品定位
+
+小说驾驭引擎是作者的“副驾驶”，不是替代作者的“自动驾驶”。它要完成四件事：
+
+1. 看见骨架：把主线、支线、章节序列、信息释放和冲突推进变成可检查结构。
+2. 看见内脏：把人物动机、人物弧光、伏笔链、世界规则和读者预期变成可追踪状态。
+3. 模拟改动：在改正文前预测影响范围，避免“改一章，崩全书”。
+4. 固化决策：把作者意图、多方案比较、选择原因和拒绝原因写入修订记录。
+
+它不应该做：
+
+- 静默覆盖正文。
+- 替作者选择唯一剧情方向。
+- 把诊断写成泛泛评价。
+- 把读者评论当成必须服从的指令。
+- 在发布后回改已发布章节而不留下不可逆边界。
+
+## 2. 三层 Harness
+
+### 2.1 Story Harness
+
+Story Harness 驾驭故事骨架。
+
+它关注：
+
+- 主线目标、阶段目标和卷册目标是否一致。
+- 章节顺序是否支撑情绪、信息和冲突递进。
+- 每章是否有明确叙事功能，而不是只增加字数。
+- 信息差是否被设计，而不是被遗忘。
+- 伏笔是否有根、有延展、有回收。
+
+输出应该落到章节目标、场景目标、结构问题、冲击波分析或修订 proposal。
+
+### 2.2 Character Harness
+
+Character Harness 驾驭人物弧光。
+
+它关注：
+
+- 人物在每章的目标、信念、关系、能力、创伤和边界。
+- 人物状态变化是否有事件因果。
+- 人物选择是否符合当前已知信息。
+- 关系推进是否有场景证据。
+- 反转、黑化、和解、成长是否有前置铺垫。
+
+Character Harness 应形成状态机：横轴是章节或场景，纵轴是人物状态，不允许只写“人物更丰满”。
+
+### 2.3 Reader Harness
+
+Reader Harness 驾驭读者体验。
+
+它关注：
+
+- 黄金三章是否建立钩子、主角共鸣、世界沉浸和继续阅读动机。
+- 爽点、悬念、压迫、释放是否形成节奏频谱。
+- 读者预期是否被管理，而不是被误导到不可回收的方向。
+- 评论、吐槽、弃读信号映射到哪个结构问题。
+- 发布后如何用未来章节补强，而不是直接回改过去。
+
+Reader Harness 不等于“讨好评论”。它把反馈转成证据和风险，由作者做最终判断。
+
+## 3. 生命周期模式
+
+小说驾驭引擎必须知道作品处于哪个生命周期。
+
+| 模式 | 阶段 | 权限 | 典型动作 |
+| --- | --- | --- | --- |
+| `sandbox` | 发布前 | 可重排、可重写、可重挂伏笔 | 全本体检、结构重构、章节重排、人物弧光重写 |
+| `timeline` | 发布后 | 已发布章节只读，未来章节可写 | 读者反馈映射、回潮声明、未来章节补强、预期重塑 |
+
+这两个模式不是 UI 主题，而是写作权限和修订策略的根约束。
+
+## 4. 与现有工作面的关系
+
+| 工作面 | Harness 介入方式 |
+| --- | --- |
+| 写作 | 约束章节目标、场景目标、信息释放和当前人物状态。 |
+| 知识 | 将素材和问答编译为可被 Harness 检索的证据层。 |
+| 拆书 | 提供黄金三章、节奏频谱和同类作品结构参照。 |
+| 设定 | 维护人物状态机、伏笔链、时间线和世界规则。 |
+| 修订 | 承载小说体检、A/B/C 方案、冲击波分析和作者决策。 |
+| 发布 | 锁定发布前状态，发布后切换到 timeline 不可逆约束。 |
+
+## 5. 最小实现要求
+
+兼容实现至少需要：
+
+- 在项目级记录 `lifecycle.mode`。
+- 能生成小说体检报告。
+- 能把作者修改意图转为至少两个候选方案。
+- 能为结构改动生成冲击波分析。
+- 能区分发布前可重构和发布后不可回改。
+- 能把读者反馈映射为 issue、proposal 或 timeline iteration。
+
+## 6. 质量判断
+
+一个 Harness 输出合格，必须满足：
+
+- 有目标：说明解决哪个作者意图或读者风险。
+- 有证据：引用章节、场景、设定、反馈或导出版本。
+- 有边界：说明哪些内容不能自动改。
+- 有方案：提供可比较选项，不只给批评。
+- 有影响：预测修改会影响哪些章节、人物、伏笔和读者理解。
+- 有决策：记录作者选择、拒绝或延后原因。
 
 
 <!-- Source: docs/zh/authoring/long-form-writing-loop.md -->
@@ -369,7 +629,7 @@ description: Agent Novel 如何服务一部小说从素材到发布的长期写�
 
 # 长篇写作闭环
 
-长篇小说不是单轮生成问题。Agent Novel 的创作闭环必须覆盖“写前准备、章节推进、设定沉淀、知识编译、修订、发布、反馈再吸收”。
+长篇小说不是单轮生成问题。Agent Novel 的创作闭环必须覆盖“写前准备、章节推进、设定沉淀、知识编译、修订、发布、反馈再吸收”。v0.1.2 还要求用 Novel Harness Engine 把这些动作放进可诊断、可模拟、可决策的驾驭框架。
 
 ## 1. 写前准备
 
@@ -441,7 +701,24 @@ description: Agent Novel 如何服务一部小说从素材到发布的长期写�
 
 修订结果必须进入 issue/proposal/apply 流程。
 
-## 6. 发布闭环
+## 6. Harness 驾驭闭环
+
+当作者提出结构意图时，系统不应直接改正文，而应进入 Harness 流程：
+
+```text
+作者意图 -> 读取章节/设定/反馈证据 -> 小说体检 -> A/B/C 方案 -> 冲击波分析 -> 作者确认 -> proposal/apply
+```
+
+典型意图包括：
+
+- “女主危险感来得太晚，想提前。”
+- “第 8 到 12 章太平，想压缩说明、增强追击。”
+- “读者觉得男主第 18 章降智，想在后文补回可信度。”
+- “第 3 章世界观说明太多，想改成冲突中展示。”
+
+Harness 输出必须具体到章节、场景、人物状态、伏笔链和读者体验风险。
+
+## 7. 发布闭环
 
 发布代理处理的不是最终一步，而是一个工作面：
 
@@ -451,9 +728,10 @@ description: Agent Novel 如何服务一部小说从素材到发布的长期写�
 4. 检查未解决高风险问题。
 5. 作者确认导出。
 6. 生成 manifest 和产物。
-7. 记录读者反馈或平台反馈，回流到 raw/outputs。
+7. 锁定已发布章节范围，进入 timeline 只读边界。
+8. 记录读者反馈或平台反馈，回流到 reader feedback loop。
 
-## 7. 回流原则
+## 8. 回流原则
 
 任何有价值结果都应回流到稳定位置：
 
@@ -466,88 +744,6 @@ description: Agent Novel 如何服务一部小说从素材到发布的长期写�
 | 修订问题 | issue queue / `revisions/` |
 | 导出产物 | `exports/` |
 | 运行诊断 | `.lime/runtime/` |
-
-
-<!-- Source: docs/zh/contracts/project-package.md -->
----
-title: 项目包协议
-description: Agent Novel 项目目录、novel.json 和知识编译目录协议。
----
-
-# 项目包协议
-
-Agent Novel 项目包必须同时服务作者、桌面应用、Agent Runtime、搜索索引和导出器。核心目标是：作品资产可见、可迁移，运行支撑可重建，代理结果可审计。
-
-## 目录 profile
-
-### 基础作品 profile
-
-```text
-novel.json
-manuscript/chapters/
-canon/
-references/
-revisions/
-exports/
-.lime/
-```
-
-### 知识编译 profile
-
-```text
-raw/
-compiled/
-canon/
-manuscript/
-outputs/
-```
-
-推荐实现同时支持二者：`references/` 可作为通用入口，`raw/compiled/outputs` 作为小说知识库的规范化子层。
-
-## `novel.json` 示例
-
-```json
-{
-  "schemaVersion": 1,
-  "projectId": "proj-lime-novel",
-  "title": "钟塔尽头的雨季",
-  "subtitle": "代理优先的长篇小说工作台",
-  "status": "drafting",
-  "language": "zh-CN",
-  "genre": "悬疑 / 都市奇幻",
-  "premise": "女主在父亲失踪后的旧钟楼里，逐步揭开一条被整座城市默许的时间裂缝。",
-  "currentSurface": "writing",
-  "currentChapterId": "chapter-12",
-  "volumes": [],
-  "chapters": [],
-  "homeHighlights": [],
-  "quickActions": []
-}
-```
-
-## 章节索引
-
-章节条目不是重复正文，而是运行时和 UI 的索引：
-
-- `file` 指向正文。
-- `summary` 是章节已发生事实。
-- `objective` 是章节叙事目标。
-- `scenes` 提供场景级工作面结构。
-- `lastEditedAt` 支持恢复现场。
-
-## `.lime` 目录
-
-`.lime/runtime/project.db` 可保存：
-
-- agent tasks。
-- agent feed。
-- proposals。
-- revision issue state。
-- diagnostics。
-- evidence snippets。
-- memory snapshots。
-
-`.lime/cache`、`.lime/embeddings` 应可重建；`.lime/logs` 可清理但应避免泄露敏感信息。
 
 
 <!-- Source: docs/zh/contracts/chapter-scene-model.md -->
@@ -697,104 +893,6 @@ description: 工作记忆、章节记忆、项目记忆和上下文压缩规则�
 ```
 
 
-<!-- Source: docs/zh/contracts/knowledge-compilation.md -->
----
-title: 知识编译层
-description: raw、compiled、canon、manuscript、outputs 的小说知识库闭环。
----
-
-# 知识编译层
-
-小说知识库不是通用 wiki。它是持续从素材、正文、设定和代理输出中编译出来的项目长期记忆。
-
-## 目录分层
-
-```text
-raw/
-  captures/
-  research/
-  images/
-  notes/
-compiled/
-  entities/
-  chapters/
-  timelines/
-  themes/
-  queries/
-  reports/
-canon/
-  characters/
-  locations/
-  rules/
-  items/
-  timeline/
-manuscript/
-  chapters/
-outputs/
-  answers/
-  briefs/
-  reports/
-```
-
-| 层 | 角色 |
-| --- | --- |
-| `raw` | 原始输入，不自动可信。 |
-| `compiled` | 机器维护的工作知识层，可包含候选和冲突。 |
-| `canon` | 已确认稳定事实。 |
-| `manuscript` | 正文事实源。 |
-| `outputs` | 问答、报告、导出辅助材料，可再次被读取。 |
-
-## 知识页最小协议
-
-```yaml
-id: kb-character-lin-qingyuan
-type: character
-title: 林清远
-status: candidate
-sources:
-  - manuscript/chapters/012-before-the-lock-turns.md
-related:
-  - kb-location-clocktower
-  - kb-item-key
-updatedAt: 2026-04-03T15:10:00+08:00
-```
-
-正文建议结构：
-
-- 简述。
-- 当前可信事实。
-- 证据来源。
-- 与其他页面的关系。
-- 未决问题。
-- 反向链接。
-
-## 核心工作流
-
-```text
-导入素材 -> 编译知识 -> 项目问答 -> 健康检查 -> 回写项目
-```
-
-### 导入素材
-
-支持 `.txt`、`.md`、`.markdown` 等文本材料。导入后进入 `raw/research`，保留来源路径和导入时间。
-
-### 编译知识
-
-编译不是摘要，而是把材料拆成实体、章节、时间线、主题、冲突和未决问题。
-
-### 项目问答
-
-项目问答不是一次性气泡，应该写入 `outputs/answers/`，成为后续可读资产。
-
-### 健康检查
-
-检查知识层是否存在：过期、冲突、无来源、重复实体、未回收伏笔、未解决 high issue。
-
-### 回写项目
-
-稳定事实回写 `canon`，修订洞察回写 issue，写作建议回写 proposal。
-
-
 <!-- Source: docs/zh/contracts/writing-quality-signals.md -->
 ---
 title: 写作质量信号
@@ -818,6 +916,10 @@ Agent Novel 不规定文学审美，但规定长篇小说代理应该能结构�
 | 情绪跳变 | 角色情绪转折缺少触发。 | local rewrite proposal。 |
 | 语言漂移 | 叙述声音或角色台词突然变味。 | style proposal。 |
 | 发布阻断 | 缺章、标题缺失、未解决高风险问题。 | publish blocker。 |
+| 黄金三章弱 | 开局缺少钩子、主角共鸣、世界沉浸或继续阅读动机。 | diagnostic report + sandbox intent plan。 |
+| 冲击波过大 | 局部改动会破坏后续反转、伏笔或人物可信度。 | impact analysis + 多方案比较。 |
+| 读者预期失配 | 评论或弃读信号集中指向承诺与兑现不一致。 | reader feedback mapping + timeline iteration。 |
+| 时间线篡改风险 | 发布后试图回改已发布事实。 | blocking issue + future fix。 |
 
 ## 输出要求
 
@@ -825,9 +927,441 @@ Agent Novel 不规定文学审美，但规定长篇小说代理应该能结构�
 
 - target：章节、场景、段落或设定卡。
 - evidence：原文或来源引用。
-- severity：low / medium / high。
+- severity：low / medium / high / blocking。
 - impact：影响读者理解、悬念、人物可信度或发布。
-- suggestedAction：生成 proposal、更新 canon、延后处理或直接忽略。
+- suggestedAction：生成 proposal、更新 canon、运行冲击波分析、进入 timeline iteration、延后处理或直接忽略。
+
+## Harness 质量门槛
+
+- 发现必须能落到具体章节、场景、设定卡、人物状态或读者反馈来源。
+- 高风险结构改动必须先生成冲击波分析。
+- 发布后问题默认转为未来章节修复，不直接回改已发布章节。
+- 黄金三章评估必须分别判断钩子、主角共鸣、世界沉浸和继续阅读动机。
+
+
+<!-- Source: docs/zh/contracts/sandbox-harness.md -->
+---
+title: 沙盘 Harness
+description: 发布前 sandbox 模式的结构诊断、模拟和重构契约。
+---
+
+# 沙盘 Harness
+
+`sandbox` 是发布前模式。作品尚未进入不可逆读者时间线，作者可以推倒、重排、替换和重挂结构。沙盘 Harness 的目标是让这种自由变得可控。
+
+## 1. 权限边界
+
+| 对象 | sandbox 权限 |
+| --- | --- |
+| 未发布章节 | 可重写，但必须通过 proposal/apply。 |
+| 章节顺序 | 可重排，但要生成影响分析。 |
+| 伏笔链 | 可新增、移动、删除、合并。 |
+| 人物弧光 | 可重构状态机和关键转折。 |
+| canon | 候选可批量整理，confirmed 修改需审批。 |
+| exports | 可重新生成，不反向覆盖正文。 |
+
+## 2. 沙盘诊断
+
+沙盘 Harness 应支持全局结构扫描，形成小说体检报告：
+
+- 主线是否清楚。
+- 卷册目标是否支撑主线。
+- 章节是否有叙事功能。
+- 人物状态变化是否有因果。
+- 伏笔是否有根、有延迟、有回收。
+- 信息释放是否过早、过晚或重复。
+- 节奏是否存在长平段或高潮过密。
+- 黄金三章是否能留住目标读者。
+
+诊断不能只给“不错”“需要加强”。每个发现必须带目标引用、证据、严重度和建议动作。
+
+## 3. 意图到方案
+
+作者输入修改意图后，沙盘 Harness MUST 生成候选方案，而不是直接改稿。
+
+示例意图：
+
+```text
+让女主更早显露危险感，但不要破坏第 12 章反转。
+```
+
+候选方案应包含：
+
+| 字段 | 说明 |
+| --- | --- |
+| `optionId` | 稳定方案 ID。 |
+| `summary` | 方案概述。 |
+| `edits` | 涉及章节、场景、设定或伏笔。 |
+| `benefits` | 对作者意图的收益。 |
+| `costs` | 需要牺牲或重写的内容。 |
+| `risks` | 人物可信度、节奏、读者误解等风险。 |
+| `impactRef` | 对应冲击波分析。 |
+
+## 4. 结构操作
+
+沙盘 Harness 可以提出以下操作：
+
+- 章节提前或后移。
+- 场景拆分、合并或换视角。
+- 伏笔前置、延后、删除或增加回收点。
+- 人物转折重排。
+- 信息差重新分配。
+- 黄金三章重构。
+
+但执行规则始终是：
+
+```text
+作者意图 -> 候选方案 -> 冲击波分析 -> 作者确认 -> proposal/apply -> revision record
+```
+
+## 5. 退出沙盘
+
+当作品进入发布前锁定时，应生成：
+
+- 最近一次小说体检报告。
+- 未解决高风险 issue 列表。
+- 已确认 canon 快照。
+- 导出预检结果。
+- 即将进入 `timeline` 的只读章节范围。
+
+发布完成后，已发布章节进入时间线 Harness 的只读边界。
+
+
+<!-- Source: docs/zh/contracts/timeline-harness.md -->
+---
+title: 时间线 Harness
+description: 发布后 timeline 模式的不可逆约束和追加式修复契约。
+---
+
+# 时间线 Harness
+
+`timeline` 是发布后模式。作品已经进入读者体验，已发布章节成为不可逆历史。时间线 Harness 的目标不是回改过去，而是用未来章节重塑读者对过去的理解。
+
+## 1. 不可逆边界
+
+| 对象 | timeline 权限 |
+| --- | --- |
+| 已发布章节 | 只读，除错字级勘误外不能静默改写。 |
+| 未发布章节 | 可写，可承载补强、回潮、重塑预期。 |
+| canon | 与已发布事实冲突的修改必须标记为 retcon 风险。 |
+| 读者反馈 | 作为证据输入，不作为直接指令。 |
+| 导出资产 | 保留版本和 manifest，不覆盖历史。 |
+
+## 2. 追加式修复
+
+时间线 Harness 支持四类修复策略：
+
+| 策略 | 说明 |
+| --- | --- |
+| 回潮声明 | 在新章节自然回应旧争议、补洞或点明旧伏笔的新意义。 |
+| 未来桥段 | 用未来事件补足旧动机或关系可信度。 |
+| 伏笔回收 | 将读者认为“无用”的元素转为后续关键线索。 |
+| 预期重置 | 通过新信息调整读者对主线、角色或世界规则的理解。 |
+
+这些策略必须落在未来章节或发布备注，不能假装过去没有发生。
+
+## 3. 读者反馈映射
+
+反馈进入系统后，应先被聚合，再映射：
+
+```text
+评论 / 吐槽 / 弃读信号
+-> 情绪与主题聚类
+-> 章节 / 人物 / 节奏 / 设定 / 伏笔定位
+-> 风险判断
+-> timeline iteration
+```
+
+映射必须区分：
+
+- 真实结构问题。
+- 目标读者偏好差异。
+- 读者误读但可利用的悬念。
+- 评论噪音或恶意反馈。
+
+## 4. 回潮声明
+
+回潮声明不是作者公告，而是叙事内响应。
+
+合格的回潮声明需要：
+
+- 指向一个已发布争议或未解疑点。
+- 落在未来章节的自然场景中。
+- 不破坏已发布事实。
+- 给读者“原来如此”的重读收益。
+- 在 revision record 中记录回应对象和风险。
+
+## 5. 发布后修订记录
+
+timeline 修订记录必须包含：
+
+- 触发反馈或作者意图。
+- 已发布只读范围。
+- 未来章节承载点。
+- 读者体验风险。
+- 是否存在 retcon 风险。
+- 作者选择与拒绝原因。
+
+这样才能保证发布后调整是可审计的“时间线舞蹈”，而不是对历史的静默篡改。
+
+
+<!-- Source: docs/zh/contracts/diagnostic-report.md -->
+---
+title: 小说体检报告
+description: Diagnostic Report 的结构、指标和输出要求。
+---
+
+# 小说体检报告
+
+小说体检报告是 Harness 的诊断产物。它把“感觉哪里不对”转成可定位、可排序、可修复的问题清单。
+
+## 1. 报告范围
+
+报告可以覆盖：
+
+- 单章。
+- 连续章节段。
+- 单卷。
+- 全书。
+- 黄金三章。
+- 某条人物弧光。
+- 某条伏笔链。
+- 某个发布版本。
+
+## 2. 诊断维度
+
+| 维度 | 检查问题 |
+| --- | --- |
+| 结构 | 主线、卷册目标、章节功能是否一致。 |
+| 节奏 | 冲突密度、信息释放、情绪高低、长平段。 |
+| 人物 | 目标、信念、关系、能力、创伤、转折是否有因果。 |
+| 伏笔 | 是否无根、断裂、过期、可回收或重复。 |
+| 信息差 | 作者知道、角色知道、读者知道是否被清晰区分。 |
+| 连续性 | 时间线、地点、设定、物件、能力规则是否冲突。 |
+| 世界观负载 | 设定解释是否压垮场景推进。 |
+| 读者风险 | 弃读点、误读点、期待落空点。 |
+
+## 3. 黄金三章专项评估
+
+黄金三章用于评估连载生存率，不等于机械套路。
+
+| 指标 | 合格信号 |
+| --- | --- |
+| 钩子质量 | 开篇问题具体、有压力、有延展空间。 |
+| 主角共鸣 | 主角欲望、困境、能力或缺陷能被读者抓住。 |
+| 世界沉浸 | 世界规则进入冲突，而不是堆设定说明。 |
+| 继续阅读动机 | 第三章结束时读者明确想知道下一步。 |
+
+输出必须指出问题落点，例如“第 2 章 3 个连续说明段稀释了追击压力”，而不是“节奏略慢”。
+
+## 4. Finding 结构
+
+每个 finding 至少包含：
+
+- `findingId`。
+- `area`：结构、节奏、人物、伏笔、信息差、连续性等。
+- `severity`：low、medium、high、blocking。
+- `targetRefs`：章节、场景、角色、设定或导出版本。
+- `evidence`：证据片段或摘要。
+- `diagnosis`：问题判断。
+- `recommendation`：下一步动作。
+- `harnessLayer`：Story、Character 或 Reader。
+
+## 5. 报告出口
+
+体检报告可以产生：
+
+- revision issue。
+- intent plan。
+- impact analysis。
+- canon candidate。
+- timeline iteration。
+- publish blocker。
+
+报告本身不直接改正文。
+
+
+<!-- Source: docs/zh/contracts/impact-analysis.md -->
+---
+title: 冲击波分析
+description: 结构改动前的影响范围、风险和回滚契约。
+---
+
+# 冲击波分析
+
+冲击波分析用于回答一个问题：如果现在改这里，哪里会跟着变？
+
+它是 Harness 的安全带，尤其适合长篇小说的结构重构、伏笔移动和人物弧光调整。
+
+## 1. 触发场景
+
+以下动作 SHOULD 触发冲击波分析：
+
+- 章节提前、后移或删除。
+- 关键事实提前暴露或延后暴露。
+- 伏笔新增、删除、换承载章节。
+- 人物关系或立场提前变化。
+- 世界规则修改。
+- 已发布内容相关的 future fix。
+
+## 2. 影响对象
+
+| 对象 | 示例 |
+| --- | --- |
+| 章节 | 第 7 章信息提前影响第 12 章反转。 |
+| 场景 | 某场景失去冲突或信息功能。 |
+| 人物 | 角色知道的信息变化导致后续选择不可信。 |
+| 伏笔 | 原回收点失效，或新增无根伏笔。 |
+| 时间线 | 事件顺序与旅行时间冲突。 |
+| 设定 | 能力规则、组织边界或物件状态冲突。 |
+| 读者 | 悬念提前破掉、期待被误导或爽点延迟。 |
+| 发布 | 已发布章节不可改，只能 future fix。 |
+
+## 3. 分析输出
+
+冲击波分析至少包含：
+
+- 作者意图。
+- 拟议改动。
+- 当前 lifecycle mode。
+- 受影响对象列表。
+- 风险级别。
+- 必须同步更新的文件或事实源。
+- 可接受的替代方案。
+- 推荐执行顺序。
+
+## 4. 风险分级
+
+| 级别 | 含义 | 处理 |
+| --- | --- | --- |
+| low | 局部措辞或单场景影响。 | 可生成 proposal。 |
+| medium | 影响相邻章节或局部人物状态。 | 需要作者确认。 |
+| high | 影响主线、反转、核心人物或多个伏笔。 | 需要多方案比较。 |
+| blocking | 与已发布事实或核心设定冲突。 | 默认拒绝或转为 timeline 修复。 |
+
+## 5. 示例
+
+```text
+意图：第 7 章提前暴露女主真实身份。
+影响：第 12 章身份反转失去冲击；第 9 章男主的错误判断不再可信；第 15 章阵营选择需要重写动机。
+建议：不要直接暴露身份，改为暴露一个危险能力副作用，并在第 12 章回收身份真相。
+```
+
+这个输出可以进入 `impact-analysis.schema.json`，并被 intent plan、revision record 或 timeline iteration 引用。
+
+
+<!-- Source: docs/zh/contracts/reader-feedback-loop.md -->
+---
+title: 读者反馈闭环
+description: 反馈聚合、结构映射和发布后追加式修复契约。
+---
+
+# 读者反馈闭环
+
+读者反馈闭环把评论、吐槽、讨论、评分和弃读信号变成结构化证据。它不是“读者说什么就改什么”，而是帮助作者判断哪些反馈代表真实结构风险。
+
+## 1. 输入类型
+
+- 章节评论。
+- 段落吐槽。
+- 论坛讨论。
+- 书评或评分。
+- 收藏、追读、弃读、完读等行为信号。
+- 作者手动记录的读者问题。
+
+## 2. 聚合流程
+
+```text
+收集反馈
+-> 去重与噪音过滤
+-> 情绪和主题聚类
+-> 映射到章节 / 人物 / 设定 / 节奏 / 伏笔
+-> 判断是否需要 issue / proposal / timeline iteration
+```
+
+每条聚合结论都必须保留来源摘要和置信度。
+
+## 3. 映射类别
+
+| 类别 | 说明 |
+| --- | --- |
+| chapter | 某章开头、结尾、信息量或冲突不足。 |
+| character | 人物选择、动机、关系推进或魅力不足。 |
+| pacing | 节奏平、高潮过密、爽点延迟或说明过多。 |
+| canon | 设定不清、规则冲突、世界观负载过高。 |
+| foreshadowing | 伏笔无根、过期、未回收或回收不爽。 |
+| expectation | 读者预期和实际主线偏离。 |
+| publish | 平台简介、章节切分或发布节奏问题。 |
+
+## 4. 时间线模式处理
+
+当项目处于 `timeline`：
+
+- 已发布章节默认只读。
+- 反馈不能直接变成回改指令。
+- 系统应生成未来章节策略。
+- 高风险 retcon 必须标记。
+- 作者可以选择不回应、延后回应或转为新伏笔。
+
+## 5. 回潮声明
+
+回潮声明是一种发布后修复策略。它通过未来章节自然回应旧争议。
+
+示例：
+
+```text
+读者反馈：第 18 章男主突然相信反派，显得降智。
+回潮策略：第 25 章揭示男主当时掌握了一个不能公开的线索，且付出代价。
+风险：如果解释过强，会削弱第 18 章的情绪真实感。
+```
+
+## 6. 输出对象
+
+读者反馈闭环可以输出：
+
+- `reader-feedback` 聚合记录。
+- `revision issue`。
+- `impact analysis`。
+- `timeline iteration`。
+- 发布备注或简介修订 proposal。
+
+任何输出都必须保留“反馈是证据，不是命令”的边界。
+
+
+<!-- Source: docs/zh/contracts/runtime-tools.md -->
+---
+title: 运行时工具契约
+description: Agent Novel 推荐工具与 lime-novel 已实现工具映射。
+---
+
+# 运行时工具契约
+
+工具是确定性执行单元，不是 prompt 片段。Agent 必须通过工具读取和写入项目，不能声称“已保存”但没有调用工具。
+
+## 已实现工具映射
+
+| 工具 | 风险 | 输入 | 输出 |
+| --- | --- | --- | --- |
+| `load_workspace_snapshot` | read | 空对象 | 项目、章节树、场景、拆书样本、设定候选、修订问题、导出预设、最近 feed。 |
+| `load_chapter_document` | read | `chapterId?` | 章节文档和正文内容，长内容可截断。 |
+| `search_workspace` | read | `query`, `limit?` | 搜索结果：kind、title、snippet、surface、chapterId、entityId、score。 |
+| `load_knowledge_document` | read | `relativePath` | 知识页详情。 |
+| `generate_knowledge_answer` | write-output | `question`, `format` | 写入 `outputs/` 的问答产物。 |
+| `save_proposal_draft` | propose | `content`, `chapterId?`, `linkedIssueId?` | 保存完整正文提议并返回 `proposalId`。 |
+| `upsert_canon_candidate` | propose | name、kind、summary、visibility、evidence | 写入候选设定卡。 |
+| `upsert_revision_issue` | propose | title、summary、severity、status | 写入问题队列。 |
+| `submit_task_result` | result | status、summary、artifacts | 最终结构化结果。 |
+
+## 工具使用规则
+
+- 需要上下文时优先 `load_workspace_snapshot`。
+- 需要正文时必须 `load_chapter_document`。
+- 跨资产问题用 `search_workspace`。
+- 知识问答需要沉淀时用 `generate_knowledge_answer` 写入 `outputs/`。
+- 可应用正文必须先 `save_proposal_draft`，再在 result artifacts 引用 `proposalId`。
+- 设定沉淀必须 `upsert_canon_candidate`。
+- 修订发现必须 `upsert_revision_issue`。
+- 任务结束必须 `submit_task_result`。
 
 
 <!-- Source: docs/zh/contracts/live-agent-runtime.md -->
@@ -896,42 +1430,6 @@ type SubmittedTaskResult = {
 - 写作/修订 proposal 通常以 `waiting_approval` 结束。
 
 
-<!-- Source: docs/zh/contracts/runtime-tools.md -->
----
-title: 运行时工具契约
-description: Agent Novel 推荐工具与 lime-novel 已实现工具映射。
----
-
-# 运行时工具契约
-
-工具是确定性执行单元，不是 prompt 片段。Agent 必须通过工具读取和写入项目，不能声称“已保存”但没有调用工具。
-
-## 已实现工具映射
-
-| 工具 | 风险 | 输入 | 输出 |
-| --- | --- | --- | --- |
-| `load_workspace_snapshot` | read | 空对象 | 项目、章节树、场景、拆书样本、设定候选、修订问题、导出预设、最近 feed。 |
-| `load_chapter_document` | read | `chapterId?` | 章节文档和正文内容，长内容可截断。 |
-| `search_workspace` | read | `query`, `limit?` | 搜索结果：kind、title、snippet、surface、chapterId、entityId、score。 |
-| `load_knowledge_document` | read | `relativePath` | 知识页详情。 |
-| `generate_knowledge_answer` | write-output | `question`, `format` | 写入 `outputs/` 的问答产物。 |
-| `save_proposal_draft` | propose | `content`, `chapterId?`, `linkedIssueId?` | 保存完整正文提议并返回 `proposalId`。 |
-| `upsert_canon_candidate` | propose | name、kind、summary、visibility、evidence | 写入候选设定卡。 |
-| `upsert_revision_issue` | propose | title、summary、severity、status | 写入问题队列。 |
-| `submit_task_result` | result | status、summary、artifacts | 最终结构化结果。 |
-
-## 工具使用规则
-
-- 需要上下文时优先 `load_workspace_snapshot`。
-- 需要正文时必须 `load_chapter_document`。
-- 跨资产问题用 `search_workspace`。
-- 知识问答需要沉淀时用 `generate_knowledge_answer` 写入 `outputs/`。
-- 可应用正文必须先 `save_proposal_draft`，再在 result artifacts 引用 `proposalId`。
-- 设定沉淀必须 `upsert_canon_candidate`。
-- 修订发现必须 `upsert_revision_issue`。
-- 任务结束必须 `submit_task_result`。
-
-
 <!-- Source: docs/zh/contracts/agent-feed-projection.md -->
 ---
 title: Agent Feed 投影契约
@@ -985,156 +1483,10 @@ Feed action 支持：
 Action 是受控入口，不允许卡片携带任意代码或任意工具调用。
 
 
-<!-- Source: docs/zh/contracts/diagnostics-trace.md -->
----
-title: 诊断与轨迹契约
-description: Agent Novel 任务诊断、工具事件和失败记录。
----
-
-# 诊断与轨迹契约
-
-诊断用于解释“代理为什么这样做”，也用于恢复和调试 live runtime。
-
-## Trace Entry
-
-```ts
-type AgentTraceEntry = {
-  role: 'system' | 'user' | 'assistant' | 'tool'
-  turnIndex: number
-  content?: string
-  toolCallId?: string
-  toolName?: string
-  toolCalls?: Array<{ id: string; name: string }>
-  stopReason?: string
-}
-```
-
-## Tool Event
-
-```ts
-type AgentToolEvent = {
-  turnIndex: number
-  toolCallId: string
-  toolName: string
-  status: 'requested' | 'rejected' | 'started' | 'completed' | 'failed'
-  isConcurrencySafe: boolean
-  progressLabel?: string
-  error?: string
-  isStructuredOutputTool?: boolean
-}
-```
-
-## Failure
-
-失败记录 SHOULD 包含：
-
-- subtype：最大轮次、结构化输出重试耗尽、执行错误。
-- detail：中文可读原因。
-- providerCode：provider 原生错误码或分类。
-- stopReason：模型停止原因。
-- turnCount：轮次。
-- usage：input/output tokens。
-
-诊断可以展示在 Agent 侧栏，但不应暴露密钥、完整敏感来源或无关系统路径。
-
-
-<!-- Source: docs/zh/client-implementation/runtime-standard.md -->
----
-title: 客户端运行时标准
-description: Agent Novel 客户端如何发现项目、组装上下文、执行任务和投影结果。
----
-
-# 客户端运行时标准
-
-客户端必须把 Novel 项目、Agent Runtime 和 UI 投影分开。项目文件是作品事实，Runtime 是执行事实，UI 是可见状态。
-
-## 发现
-
-1. 查找 `novel.json`。
-2. 校验 schemaVersion 和 projectId。
-3. 加载 chapters、volumes、currentSurface、currentChapterId。
-4. 扫描 raw/compiled/canon/manuscript/outputs/exports。
-5. 打开或创建 `.lime/runtime/project.db`。
-6. 恢复最近 task、feed、diagnostics。
-
-## 任务启动
-
-任务输入 SHOULD 包含：surface、intent、chapterId、featureTool、targetRefs、writePolicy。
-
-客户端根据 surface 选择默认代理：writing -> chapter，knowledge -> knowledge，analysis -> analysis，canon -> canon，revision -> revision，publish -> publish。
-
-## 上下文装配
-
-上下文应按顺序选择：
-
-1. 用户显式目标。
-2. 当前章节和场景目标。
-3. 相关 canon 和 compiled memory。
-4. 未解决 issue。
-5. 最近 feed 和 proposal 状态。
-6. raw/reference/knowledge source。
-7. 导出和发布状态。
-
-## 回写
-
-写入必须走 use case / repository / controlled tool：
-
-- 保存章节。
-- 保存 proposal。
-- 应用 proposal。
-- 拒绝 proposal。
-- 写入 canon candidate。
-- 更新 revision issue。
-- 创建 export package。
-
-UI 不允许直接写文件，也不允许从聊天文本推断写入。
-
-## 诊断
-
-客户端 SHOULD 提供 task diagnostics 查看入口，包括 trace、tool events、token usage、failure 和 updatedAt。
-
-
-<!-- Source: docs/zh/surfaces/home.md -->
----
-title: 首页工作面
-description: 恢复现场、项目健康度和项目总控代理。
----
-
-# 首页工作面
-
-首页不是功能广告页，而是作者回到作品的恢复现场。
-
-## 左侧作品对象
-
-- 最近项目和当前项目。
-- 当前章节入口。
-- 最近后台结果。
-- 项目健康度。
-- 快捷动作。
-
-## 右侧代理
-
-项目总控代理负责：
-
-- 总结当前项目状态。
-- 推荐下一步。
-- 汇总设定、修订、发布后台结果。
-- 在风险升高时提示作者。
-
-## 标准卡片
-
-- 恢复写作。
-- 最近后台结果。
-- 项目健康度。
-- 下一步建议。
-- 风险摘要。
-
-
-
 <!-- Source: docs/zh/surfaces/writing.md -->
 ---
 title: 写作工作面
-description: 章节树、场景列表、Tiptap 正文编辑和章节代理。
+description: 章节树、场景列表、正文编辑、章节代理和 Harness 约束。
 ---
 
 # 写作工作面
@@ -1147,6 +1499,8 @@ description: 章节树、场景列表、Tiptap 正文编辑和章节代理。
 - 场景列表。
 - 当前章节目标。
 - 本章状态。
+- 当前 lifecycle mode：`sandbox` 或 `timeline`。
+- Harness 提示：本章承担的结构功能、人物状态、伏笔状态和读者体验风险。
 
 ## 主工作面
 
@@ -1155,6 +1509,7 @@ description: 章节树、场景列表、Tiptap 正文编辑和章节代理。
 - 行内提议。
 - 提议接受/拒绝。
 - 差异对照。
+- 当前场景的目标、冲突、信息释放和情绪方向。
 
 ## 章节代理
 
@@ -1164,56 +1519,39 @@ description: 章节树、场景列表、Tiptap 正文编辑和章节代理。
 - 改写选区。
 - 补强场景目标。
 - 根据 canon 和 compiled memory 控制连续性。
+- 调用 Story Harness 检查信息释放和章节功能。
+- 调用 Character Harness 检查人物知道什么、相信什么、能做什么。
 - 保存 proposal，不直接覆盖正文。
+
+## Harness 约束
+
+写作时，Harness 不是额外聊天，而是当前章节的约束层：
+
+| 约束 | 写作含义 |
+| --- | --- |
+| 章节功能 | 本章必须推进什么主线、关系、伏笔或主题。 |
+| 场景目标 | 当前场景必须改变什么状态。 |
+| 信息差 | 作者、角色、读者分别知道什么。 |
+| 人物状态 | 角色当前目标、信念、关系和能力边界。 |
+| 伏笔状态 | 本章种下、加强、误导或回收哪些线索。 |
+| 读者体验 | 本章是否承担钩子、爽点、压迫、释放或回潮声明。 |
 
 ## 编辑器协议
 
 Tiptap 或其他编辑器只是 UI 状态源；保存后才通过应用层回写章节文件。右栏消息变化不应导致编辑器实例重建。
 
-
-
-<!-- Source: docs/zh/surfaces/knowledge.md -->
----
-title: 知识工作面
-description: 知识页、证据、问答产物和知识代理。
----
-
-# 知识工作面
-
-知识工作面承接小说长期记忆，不是通用第二大脑。
-
-## 能力
-
-- 导入 `.txt` / `.md` / `.markdown`。
-- 展示 raw、compiled、canon、outputs。
-- 针对项目问题生成 brief/report。
-- 写入 `outputs/answers/`。
-- 把稳定事实推荐回 canon。
-
-## 健康度
-
-知识工作面 SHOULD 展示：
-
-- 知识资产数量。
-- 最近输出。
-- 当前范围。
-- 过期、冲突、未来源化问题。
-
-## 问答原则
-
-回答必须区分已知、推断和未知。资料缺失时应说明缺口，不编造。
-
+在 `timeline` 模式下，已发布章节应以只读或受限勘误状态显示；任何影响剧情事实的修改都必须转为未来章节 proposal 或 timeline iteration。
 
 
 <!-- Source: docs/zh/surfaces/analysis.md -->
 ---
 title: 拆书工作面
-description: 写前拆书建模、样本指标和拆书代理。
+description: 写前拆书建模、样本指标、黄金三章和读者体验参照。
 ---
 
 # 拆书工作面
 
-拆书工作面用于写前建模，不用于复制样本文本。
+拆书工作面用于写前建模，不用于复制样本文本。它给 Reader Harness 提供参照：目标读者为什么被吸引、在哪里停留、为什么弃读。
 
 ## 核心指标
 
@@ -1221,35 +1559,51 @@ description: 写前拆书建模、样本指标和拆书代理。
 - characterHeat：人物吸引力。
 - pacingMomentum：节奏动能。
 - feedbackResonance：读者反馈共振。
+- goldenThreeSurvival：黄金三章生存率。
+- expectationControl：读者预期控制。
 
-## 输出
+## 拆书对象
 
 - 爆点拆解。
 - 人物吸引力观察。
 - 节奏结构观察。
 - 读者反馈。
-- 风险提醒。
+- 黄金三章结构。
+- 伏笔和回收节奏。
 - 对本项目的启发。
 
-拆书结果进入 analysis artifact、compiled report 或 outputs，不直接成为正文。
+## Harness 输出
 
+拆书代理不输出“照抄建议”，只输出可迁移的结构洞察：
+
+| 输出 | 用途 |
+| --- | --- |
+| reader pattern | 目标读者对钩子、爽点、关系、反转的响应模式。 |
+| pacing reference | 同类作品的高潮间距、说明密度、转场方式。 |
+| golden-three note | 开局三章的钩子、主角共鸣、世界沉浸参照。 |
+| risk hint | 当前项目可能踩到的节奏、设定或期待风险。 |
+
+拆书结果进入 analysis artifact、compiled report 或 outputs，不直接成为正文。
 
 
 <!-- Source: docs/zh/surfaces/canon.md -->
 ---
 title: 设定工作面
-description: 候选设定卡、关系图、时间线和设定代理。
+description: 候选设定卡、关系图、时间线、伏笔链和人物状态机。
 ---
 
 # 设定工作面
 
-设定工作面是项目长期一致性的前台，不是后台管理页。
+设定工作面是项目长期一致性的前台，不是后台管理页。它同时服务 canon 和 Harness：canon 记录事实，Harness 驾驭这些事实如何影响剧情推进。
 
 ## 视图
 
 - 卡片视图。
 - 关系图。
 - 时间线。
+- 人物状态机。
+- 伏笔链。
+- 信息差矩阵。
 
 ## 卡片状态
 
@@ -1257,49 +1611,98 @@ description: 候选设定卡、关系图、时间线和设定代理。
 - confirmed：已确认事实。
 - archived：废弃或历史事实。
 
+## Harness 对象
+
+| 对象 | 说明 |
+| --- | --- |
+| 人物状态机 | 按章节记录目标、信念、关系、能力、创伤、转折。 |
+| 伏笔链 | 记录种下点、强化点、误导点、回收点和过期风险。 |
+| 时间线 | 记录事件顺序、因果、角色到场能力和已发布不可逆边界。 |
+| 信息差矩阵 | 区分作者知道、角色知道、读者知道。 |
+
 ## 设定代理
 
 设定代理负责提取候选、发现冲突、同步人物状态、生成时间线事件。候选不能自动升级为 confirmed，除非策略允许或作者确认。
 
+在 `timeline` 模式下，设定代理还必须标记 retcon 风险：任何与已发布事实冲突的设定修改，都应转为 future fix 或回潮声明，而不是静默覆盖历史。
 
 
 <!-- Source: docs/zh/surfaces/revision.md -->
 ---
 title: 修订工作面
-description: 问题队列、证据、差异和修订代理。
+description: 问题队列、小说体检、冲击波分析、证据、差异和修订代理。
 ---
 
 # 修订工作面
 
-修订工作面把问题变成可处理队列。
+修订工作面把问题变成可处理队列，也承载 Novel Harness Engine 的主要操作：体检、方案、模拟、确认和记录。
 
 ## 问题队列
 
 每个 issue 至少包含：标题、摘要、章节、severity、status 和证据。
+
+Harness issue 还应包含：
+
+- harnessLayer：Story、Character 或 Reader。
+- lifecycleMode：sandbox 或 timeline。
+- targetRefs：章节、场景、人物、伏笔、导出版本或反馈来源。
+- impactRef：冲击波分析。
+- readerExperienceRisk：读者体验风险。
 
 ## 修订动作
 
 - 延后。
 - 标记解决。
 - 生成最小改写 proposal。
+- 生成 A/B/C 候选方案。
+- 运行冲击波分析。
 - 应用或拒绝 proposal。
 - 撤销 applied record。
 
+## 小说体检
+
+修订工作面应支持：
+
+- 单章体检。
+- 连续章节体检。
+- 黄金三章专项评估。
+- 人物弧光扫描。
+- 伏笔完整性扫描。
+- 节奏频谱扫描。
+- 发布前阻断项扫描。
+
+体检报告只能生成 report、issue、plan 或 proposal，不能直接改正文。
+
+## Harness-driven 修订流程
+
+```text
+作者意图
+-> 体检或检索证据
+-> A/B/C 修订方案
+-> 冲击波分析
+-> 作者选择
+-> proposal/apply
+-> revision record
+```
+
+修订记录必须保留作者为什么选中某方案，也要保留为什么拒绝其他方案。否则系统无法学习作者的结构偏好。
+
 ## 修订代理
 
-修订代理不应输出泛泛批评，而应输出带目标、证据、严重度和建议动作的问题。
+修订代理不应输出泛泛批评，而应输出带目标、证据、严重度、影响范围和建议动作的问题。
 
+在 `timeline` 模式下，修订代理不能建议直接回改已发布章节；它应该生成 timeline iteration、回潮声明或未来章节补强方案。
 
 
 <!-- Source: docs/zh/surfaces/publish.md -->
 ---
 title: 发布工作面
-description: 导出预设、发布草案、manifest 和发布代理。
+description: 导出预设、发布草案、manifest、发布代理和 timeline 切换。
 ---
 
 # 发布工作面
 
-发布工作面负责把作品资产转成可交付产物。
+发布工作面负责把作品资产转成可交付产物，也负责把项目从 `sandbox` 推进到 `timeline`。
 
 ## 能力
 
@@ -1309,120 +1712,77 @@ description: 导出预设、发布草案、manifest 和发布代理。
 - 发布备注草案。
 - 版本比较。
 - 资产检查。
+- 发布前 Harness 锁定。
 - 最终确认。
+
+## 发布前 Harness 锁定
+
+正式导出前应检查：
+
+- 小说体检报告是否存在 blocking issue。
+- 黄金三章是否通过作者设定的最低标准。
+- confirmed canon 是否与正文一致。
+- 高风险伏笔是否有回收计划。
+- 未解决修订 issue 是否被作者确认延后。
+- 将进入只读状态的章节范围。
 
 ## 导出结果
 
 每次导出生成目录和 `manifest.json`，记录 preset、version、synopsis、splitChapters、notes、feedback 和 files。
+
+发布 manifest SHOULD 记录：
+
+- lifecycle mode 切换时间。
+- publishedChapterRefs。
+- harness profile 快照。
+- 未解决但已确认放行的 issue。
+
+## 发布后 timeline
+
+发布完成后，项目进入或部分进入 `timeline`：
+
+- 已发布章节只读。
+- 新反馈进入 reader feedback loop。
+- 修订建议默认落在未来章节。
+- 回潮声明、未来桥段和伏笔回收成为主要修复方式。
 
 ## 审批
 
 最终导出需要作者确认。外部发布或同步必须走更严格策略。
 
 
-
-<!-- Source: docs/zh/reference/lime-novel-source-analysis.md -->
----
-title: Lime Novel 来源分析
-description: Agent Novel v0.1.1 从 lime-novel 真实文档和实现中抽象出的标准事实。
----
-
-# Lime Novel 来源分析
-
-v0.1.1 重写时不再只参考目录，而是读取了 `lime-novel` 的 PRD、技术文档、DTO、domain model、runtime tools、renderer surfaces 和 runtime smoke。
-
-## 产品文档事实
-
-`docs/prd/lime-novel-electron-product-design.md` 提供：
-
-- 目标不是帮写一段，而是陪作者持续写完、修完、发出去。
-- 代理不是聊天侧栏，而是项目总控、章节、设定、修订、发布、研究的中台。
-- 技能是受控能力单元，不是提示词。
-- 子代理可以分叉，但不能污染主写作上下文。
-- 长篇项目需要工作记忆、章节记忆、项目记忆。
-- 能力按场景动态激活。
-- 工具编排、任务面板、权限边界是一等能力。
-
-`docs/prd/lime-novel-knowledge-base-design.md` 提供：
-
-- 小说知识库是知识编译层，不是通用 wiki。
-- 核心目录：raw、compiled、canon、manuscript、outputs。
-- 工作流：导入素材、编译知识、项目问答、健康检查、回写项目。
-- 知识页字段：id、type、title、status、sources、related、updatedAt。
-
-`docs/prd/lime-novel-ui-design.md` 提供：
-
-- UI 结构：左侧小说工作面 + 右侧 AI 代理协作栏。
-- 右栏双态：建议和对话共享任务、证据、提议、审批状态。
-- 工作面：首页、写作、设定、修订、发布。
-- 结果类型：任务卡、证据卡、提议块、差异卡、审批条、风险卡。
-
-## 技术文档事实
-
-`docs/tech/architecture-overview.md` 提供六层架构和双中枢：作品中枢与代理中枢。
-
-`docs/tech/data-model.md` 提供 Series、Project、Volume、Chapter、Scene、CanonCard、RevisionIssue、RevisionProposal、ApprovalRequest 和 SQLite 表建议。
-
-`docs/tech/agent-runtime.md` 提供当前已实现 runtime：provider、单代理 loop、工具调用、结构化结果、诊断持久化和未实现边界。
-
-`docs/tech/state-architecture.md` 提供三层状态：项目资源态、代理任务态、局部 UI 态，以及请求流/事件流分离。
-
-`docs/tech/desktop-architecture.md` 提供 Electron Main、Preload、Renderer、Background Workers 的安全边界。
-
-## 代码事实
-
-`packages/domain-novel/src/index.ts` 提供标准 surface、agent type、task status、risk level 和领域类型。
-
-`packages/application/src/dto/index.ts` 提供 UI/IPC DTO：AgentFeedItem、AgentTask、Diagnostics、KnowledgeDocument、AnalysisSample、ExportHistory 等。
-
-`packages/agent-runtime/src/live-agent-prompts.ts` 提供各 surface 的真实提示约束。
-
-`packages/agent-runtime/src/live-agent-workspace-tools.ts`、`live-agent-persistence-tools.ts`、`live-agent-result-tool.ts` 提供真实工具集合。
-
-`apps/desktop/src/renderer/src/features/*` 提供工作面实现：写作、知识、拆书、设定、修订、发布、AgentSidebar。
-
-`scripts/runtime-smoke.mjs` 证明项目、章节保存、写作 proposal、设定候选、修订问题、知识问答、知识导入、Markdown/EPUB 导出和诊断持久化已经形成闭环。
-
-## v0.1.1 提升结果
-
-本标准将上述事实提升为：
-
-- 工作面标准。
-- 项目包标准。
-- 知识编译标准。
-- 章节/场景/记忆标准。
-- 运行时工具标准。
-- Agent Feed 投影标准。
-- 诊断标准。
-- 发布导出标准。
-
-
 <!-- Source: docs/zh/reference/json-schemas.md -->
 ---
 title: JSON Schemas
-description: Agent Novel v0.1.1 参考 JSON Schema。
+description: Agent Novel v0.1.2 参考 JSON Schema。
 ---
 
 # JSON Schemas
 
-Agent Novel v0.1.1 的 schema 用于 lint、导入校验、运行时诊断和互操作测试。schema 是参考契约，不禁止 `metadata` 或实现方扩展。
+Agent Novel v0.1.2 的 schema 用于 lint、导入校验、运行时诊断和互操作测试。schema 是参考契约，不禁止 `metadata` 或实现方扩展。
 
 | Schema | 用途 |
 | --- | --- |
-| [`agent-feed-item.schema.json`](/schemas/agent-feed-item.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`agent-task.schema.json`](/schemas/agent-task.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`analysis-sample.schema.json`](/schemas/analysis-sample.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`canon-card.schema.json`](/schemas/canon-card.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`chapter-frontmatter.schema.json`](/schemas/chapter-frontmatter.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`export-manifest.schema.json`](/schemas/export-manifest.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`knowledge-document.schema.json`](/schemas/knowledge-document.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`novel-project.schema.json`](/schemas/novel-project.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`proposal.schema.json`](/schemas/proposal.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`revision-issue.schema.json`](/schemas/revision-issue.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`revision-record.schema.json`](/schemas/revision-record.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`runtime-event.schema.json`](/schemas/runtime-event.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`submitted-task-result.schema.json`](/schemas/submitted-task-result.schema.json) | Agent Novel v0.1.1 参考 schema。 |
-| [`workspace-shell.schema.json`](/schemas/workspace-shell.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`agent-feed-item.schema.json`](/schemas/agent-feed-item.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`agent-task.schema.json`](/schemas/agent-task.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`analysis-sample.schema.json`](/schemas/analysis-sample.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`canon-card.schema.json`](/schemas/canon-card.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`chapter-frontmatter.schema.json`](/schemas/chapter-frontmatter.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`export-manifest.schema.json`](/schemas/export-manifest.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`harness-profile.schema.json`](/schemas/harness-profile.schema.json) | Novel Harness Engine 项目配置。 |
+| [`diagnostic-report.schema.json`](/schemas/diagnostic-report.schema.json) | 小说体检报告。 |
+| [`impact-analysis.schema.json`](/schemas/impact-analysis.schema.json) | 结构改动冲击波分析。 |
+| [`intent-plan.schema.json`](/schemas/intent-plan.schema.json) | 作者意图到 A/B/C 修订方案。 |
+| [`knowledge-document.schema.json`](/schemas/knowledge-document.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`novel-project.schema.json`](/schemas/novel-project.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`proposal.schema.json`](/schemas/proposal.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`revision-issue.schema.json`](/schemas/revision-issue.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`revision-record.schema.json`](/schemas/revision-record.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`reader-feedback.schema.json`](/schemas/reader-feedback.schema.json) | 读者反馈聚合与结构映射。 |
+| [`runtime-event.schema.json`](/schemas/runtime-event.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`submitted-task-result.schema.json`](/schemas/submitted-task-result.schema.json) | Agent Novel v0.1.2 参考 schema。 |
+| [`timeline-iteration.schema.json`](/schemas/timeline-iteration.schema.json) | 发布后追加式修复计划。 |
+| [`workspace-shell.schema.json`](/schemas/workspace-shell.schema.json) | Agent Novel v0.1.2 参考 schema。 |
 
 ## 使用建议
 
@@ -1430,3 +1790,4 @@ Agent Novel v0.1.1 的 schema 用于 lint、导入校验、运行时诊断和互
 - 启动 Agent 任务前校验 task 和 workspace shell。
 - 保存 proposal、issue、feed item、export manifest 前做最小 schema 校验。
 - Runtime 诊断和 feed 投影应优先对齐 DTO，而不是解析自然语言。
+- Harness 相关 report、impact、intent plan 和 reader feedback 应作为结构化产物保存，不能只存在于聊天文本。

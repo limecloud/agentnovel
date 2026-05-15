@@ -8,7 +8,8 @@ const zhSidebar = [
       { text: '什么是 Agent Novel', link: '/zh/what-is-agent-novel' },
       { text: '规范', link: '/zh/specification' },
       { text: '作者快速开始', link: '/zh/authoring/quickstart' },
-      { text: '长篇写作闭环', link: '/zh/authoring/long-form-writing-loop' }
+      { text: '长篇写作闭环', link: '/zh/authoring/long-form-writing-loop' },
+      { text: '小说驾驭引擎', link: '/zh/concepts/novel-harness-engine' }
     ]
   },
   {
@@ -20,7 +21,8 @@ const zhSidebar = [
   {
     text: '概念',
     items: [
-      { text: '小说工作台', link: '/zh/concepts/novel-workspace' }
+      { text: '小说工作台', link: '/zh/concepts/novel-workspace' },
+      { text: '小说驾驭引擎', link: '/zh/concepts/novel-harness-engine' }
     ]
   },
   {
@@ -31,7 +33,12 @@ const zhSidebar = [
       { text: '连续性与记忆', link: '/zh/contracts/continuity-memory' },
       { text: '知识编译层', link: '/zh/contracts/knowledge-compilation' },
       { text: '上下文解析', link: '/zh/contracts/context-resolution' },
-      { text: '写作质量信号', link: '/zh/contracts/writing-quality-signals' }
+      { text: '写作质量信号', link: '/zh/contracts/writing-quality-signals' },
+      { text: '沙盘 Harness', link: '/zh/contracts/sandbox-harness' },
+      { text: '时间线 Harness', link: '/zh/contracts/timeline-harness' },
+      { text: '小说体检报告', link: '/zh/contracts/diagnostic-report' },
+      { text: '冲击波分析', link: '/zh/contracts/impact-analysis' },
+      { text: '读者反馈闭环', link: '/zh/contracts/reader-feedback-loop' }
     ]
   },
   {
@@ -78,6 +85,9 @@ const zhSidebar = [
   {
     text: '版本',
     items: [
+      { text: 'v0.1.2 概览', link: '/zh/versions/v0.1.2/overview' },
+      { text: 'v0.1.2 规范', link: '/zh/versions/v0.1.2/specification' },
+      { text: 'v0.1.2 变更记录', link: '/zh/versions/v0.1.2/changelog' },
       { text: 'v0.1.1 概览', link: '/zh/versions/v0.1.1/overview' },
       { text: 'v0.1.1 规范', link: '/zh/versions/v0.1.1/specification' },
       { text: 'v0.1.1 变更记录', link: '/zh/versions/v0.1.1/changelog' },
@@ -94,7 +104,8 @@ const enSidebar = [
       { text: 'What is Agent Novel?', link: '/en/what-is-agent-novel' },
       { text: 'Specification', link: '/en/specification' },
       { text: 'Author quickstart', link: '/en/authoring/quickstart' },
-      { text: 'Long-form writing loop', link: '/en/authoring/long-form-writing-loop' }
+      { text: 'Long-form writing loop', link: '/en/authoring/long-form-writing-loop' },
+      { text: 'Novel Harness Engine', link: '/en/concepts/novel-harness-engine' }
     ]
   },
   {
@@ -106,7 +117,12 @@ const enSidebar = [
       { text: 'Knowledge compilation', link: '/en/contracts/knowledge-compilation' },
       { text: 'Live Agent Runtime', link: '/en/contracts/live-agent-runtime' },
       { text: 'Runtime tools', link: '/en/contracts/runtime-tools' },
-      { text: 'Agent Feed projection', link: '/en/contracts/agent-feed-projection' }
+      { text: 'Agent Feed projection', link: '/en/contracts/agent-feed-projection' },
+      { text: 'Sandbox Harness', link: '/en/contracts/sandbox-harness' },
+      { text: 'Timeline Harness', link: '/en/contracts/timeline-harness' },
+      { text: 'Diagnostic Report', link: '/en/contracts/diagnostic-report' },
+      { text: 'Impact Analysis', link: '/en/contracts/impact-analysis' },
+      { text: 'Reader Feedback Loop', link: '/en/contracts/reader-feedback-loop' }
     ]
   },
   {
@@ -132,6 +148,9 @@ const enSidebar = [
   {
     text: 'Versions',
     items: [
+      { text: 'v0.1.2 overview', link: '/en/versions/v0.1.2/overview' },
+      { text: 'v0.1.2 specification', link: '/en/versions/v0.1.2/specification' },
+      { text: 'v0.1.2 changelog', link: '/en/versions/v0.1.2/changelog' },
       { text: 'v0.1.1 overview', link: '/en/versions/v0.1.1/overview' },
       { text: 'v0.1.1 changelog', link: '/en/versions/v0.1.1/changelog' },
       { text: 'v0.1.0 overview', link: '/en/versions/v0.1.0/overview' }
@@ -151,7 +170,8 @@ export default {
       { text: 'English', link: '/en/' },
       { text: '规范', link: '/zh/specification' },
       { text: '写作闭环', link: '/zh/authoring/long-form-writing-loop' },
-      { text: 'v0.1.1', link: '/zh/versions/v0.1.1/overview' },
+      { text: 'Harness', link: '/zh/concepts/novel-harness-engine' },
+      { text: 'v0.1.2', link: '/zh/versions/v0.1.2/overview' },
       { text: 'GitHub', link: 'https://github.com/limecloud/agentnovel' }
     ],
     sidebar: {

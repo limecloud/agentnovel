@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: Agent Novel
-  text: A portable standard for agent-native long-form fiction workspaces.
+  text: A portable standard for agent-native long-form fiction harnesses.
   tagline: "Choose a language to continue."
   actions:
     - theme: brand
@@ -16,10 +16,10 @@ hero:
 features:
   - title: Novel-first
     details: "Treat manuscript, canon, revisions and exports as project facts, not chat messages."
+  - title: Harness-ready
+    details: "Model sandbox, timeline, diagnostics, impact analysis and reader feedback loops."
   - title: Agent-ready
     details: "Define task, proposal, evidence and approval boundaries for writing agents."
-  - title: Local-first
-    details: "Keep author-owned assets in inspectable files and rebuild runtime support data."
 ---
 
 <script setup>
