@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/revision-issue.schema.json",
+  "title": "Agent Novel Revision Issue",
+  "type": "object",
+  "required": [
+    "issueId",
+    "type",
+    "severity",
+    "status",
+    "targetRefs",
+    "summary"
+  ],
+  "properties": {
+    "issueId": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "continuity",
+        "style",
+        "plot",
+        "canon-conflict",
+        "language",
+        "publish-blocker",
+        "custom"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "accepted",
+        "rejected",
+        "applied",
+        "deferred"
+      ]
+    },
+    "targetRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

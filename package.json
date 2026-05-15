@@ -1,0 +1,32 @@
+{
+  "name": "agentnovel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Draft documentation standard for agent-native long-form fiction workspaces.",
+  "homepage": "https://limecloud.github.io/agentnovel/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/limecloud/agentnovel.git"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "agent",
+    "novel",
+    "fiction",
+    "writing",
+    "runtime"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
+    "check:docs": "vitepress build docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

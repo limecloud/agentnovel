@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/canon-card.schema.json",
+  "title": "Agent Novel Canon Card",
+  "type": "object",
+  "required": [
+    "cardId",
+    "type",
+    "name",
+    "status"
+  ],
+  "properties": {
+    "cardId": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "character",
+        "location",
+        "faction",
+        "rule",
+        "timeline",
+        "object",
+        "theme",
+        "custom"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "candidate",
+        "ready",
+        "needs-review",
+        "disputed",
+        "archived"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "sourceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lastReviewed": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

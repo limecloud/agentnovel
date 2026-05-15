@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/proposal.schema.json",
+  "title": "Agent Novel Proposal",
+  "type": "object",
+  "required": [
+    "proposalId",
+    "taskId",
+    "targetRefs",
+    "summary",
+    "riskLevel",
+    "status"
+  ],
+  "properties": {
+    "proposalId": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "targetRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "diff": {
+      "type": [
+        "string",
+        "object",
+        "array"
+      ]
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "accepted",
+        "rejected",
+        "applied",
+        "deferred"
+      ]
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/chapter-frontmatter.schema.json",
+  "title": "Agent Novel Chapter Frontmatter",
+  "type": "object",
+  "required": [
+    "chapterId",
+    "title",
+    "order",
+    "status"
+  ],
+  "properties": {
+    "chapterId": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "revision",
+        "locked"
+      ]
+    },
+    "pov": {
+      "type": "string"
+    },
+    "timelineRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "canonRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "updated": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

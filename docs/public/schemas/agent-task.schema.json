@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/agent-task.schema.json",
+  "title": "Agent Novel Task",
+  "type": "object",
+  "required": [
+    "taskId",
+    "surface",
+    "intent"
+  ],
+  "properties": {
+    "taskId": {
+      "type": "string"
+    },
+    "surface": {
+      "type": "string",
+      "enum": [
+        "home",
+        "writing",
+        "canon",
+        "knowledge",
+        "analysis",
+        "revision",
+        "publish"
+      ]
+    },
+    "intent": {
+      "type": "string"
+    },
+    "targetRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contextBudget": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "allowedTools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "writePolicy": {
+      "type": "string",
+      "enum": [
+        "read-only",
+        "propose-only",
+        "approval-required",
+        "policy-allowed"
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

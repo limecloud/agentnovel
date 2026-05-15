@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/runtime-event.schema.json",
+  "title": "Agent Novel Runtime Event",
+  "type": "object",
+  "required": [
+    "eventId",
+    "type",
+    "taskId",
+    "projectId",
+    "timestamp",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

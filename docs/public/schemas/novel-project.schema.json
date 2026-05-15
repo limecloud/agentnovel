@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/novel-project.schema.json",
+  "title": "Agent Novel Project",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "projectId",
+    "title",
+    "language",
+    "manuscript",
+    "canon"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seriesId": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "minLength": 2
+    },
+    "genre": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "revision",
+        "publishing",
+        "archived"
+      ]
+    },
+    "currentChapterId": {
+      "type": "string"
+    },
+    "updated": {
+      "type": "string"
+    },
+    "manuscript": {
+      "type": "object",
+      "required": [
+        "chaptersDir"
+      ],
+      "properties": {
+        "chaptersDir": {
+          "type": "string"
+        },
+        "snapshotDir": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "canon": {
+      "type": "object",
+      "required": [
+        "rootDir"
+      ],
+      "properties": {
+        "rootDir": {
+          "type": "string"
+        },
+        "cardFormat": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "policies": {
+      "type": [
+        "object",
+        "array"
+      ],
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
