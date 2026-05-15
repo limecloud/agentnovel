@@ -1,85 +1,58 @@
 ---
 title: Specification
-description: Agent Novel v0.1 draft specification.
+description: Agent Novel v0.1.1 draft specification summary.
 ---
 
 # Specification
 
-Agent Novel v0.1 defines a draft standard for agent-native long-form fiction workspaces. It describes durable novel project files, writing-agent task boundaries, proposals, evidence, approvals, exports and runtime semantics without replacing Agent Skills, Agent Knowledge, Agent Runtime or Agent UI.
+Agent Novel v0.1.1 is a draft standard for agent-native long-form fiction writing workspaces. The normative detail is maintained in Simplified Chinese; this page summarizes the core contract.
 
-## Boundary
+## Core idea
 
-| System | Owns |
-| --- | --- |
-| Agent Skills | Executable workflows, scripts and tool procedures. |
-| Agent Knowledge | Source-grounded facts and safe runtime context. |
-| Agent Novel | Novel project assets, writing workspace semantics and writeback boundaries. |
-| Agent Runtime | Sessions, tasks, turns, tools, approvals, queues and events. |
-| Agent UI | Projection of runtime and novel facts into visible controls. |
+Agent Novel is not a prompt collection. It defines how a novel project is continuously written, remembered, revised and published:
 
-## Conformance levels
+```text
+source material -> information -> knowledge -> insight -> judgment -> impact
+```
 
-- `reader`: discover `novel.json` and read project assets.
-- `workspace`: provide project workbench surfaces for manuscript, canon, revisions and exports.
-- `agent-ready`: support tasks, context assembly, proposals, evidence, approvals and controlled writes.
-- `full`: support schemas, runtime events, audit records, export manifests and adjacent standard interop.
+## Implementation-grounded baseline
+
+v0.1.1 is grounded in the current Lime Novel implementation:
+
+- Surfaces: `home`, `writing`, `knowledge`, `feature-center`, `analysis`, `canon`, `revision`, `publish`.
+- Agents: `project`, `chapter`, `knowledge`, `analysis`, `canon`, `revision`, `publish`.
+- Runtime: `legacy`, `anthropic`, `openai-compatible`, single-agent loop, tool calling and `submit_task_result`.
+- Tools: workspace snapshot, chapter loading, workspace search, knowledge loading, knowledge answer generation, proposal saving, canon candidate upsert, revision issue upsert and structured task result submission.
+- UI projection: Agent Feed items for status, evidence, proposal, issue and approval.
 
 ## Project package
+
+A recommended project shape is:
 
 ```text
 my-novel/
 ├── novel.json
-├── manuscript/
-│   ├── chapters/
-│   └── snapshots/
-├── canon/
+├── manuscript/chapters/
+├── raw/{captures,research,images,notes}/
+├── compiled/{entities,chapters,timelines,themes,queries,reports}/
+├── canon/{characters,locations,factions,rules,items,timeline}/
 ├── references/
-├── revisions/
+├── revisions/snapshots/
+├── outputs/{answers,briefs,reports}/
 ├── exports/
-└── .lime/
-    ├── runtime/
-    ├── embeddings/
-    ├── cache/
-    └── logs/
+└── .lime/{runtime,embeddings,cache,logs}/
 ```
 
-Rules:
+Manuscript is story authority. Canon is confirmed story bible authority. Raw and references are source material. Compiled is working knowledge. Outputs are reusable answers and reports. `.lime` is runtime support.
 
-1. `manuscript/` and `canon/` are project fact sources.
-2. `references/` is source material, not accepted story canon.
-3. `revisions/` stores issues, proposals, diffs and applied records.
-4. `exports/` stores publishable outputs and manifests.
-5. `.lime/` stores runtime support data and must not become story authority.
+## Writing model
 
-## Required `novel.json` fields
+A compatible system models chapters and scenes with objectives, goals, summaries, status and word counts. Writing agents create proposals or patches; they do not silently overwrite accepted manuscript.
 
-| Field | Meaning |
-| --- | --- |
-| `schemaVersion` | Agent Novel schema version. |
-| `projectId` | Stable project id. |
-| `title` | Work title. |
-| `language` | Primary language. |
-| `manuscript` | Manuscript directory config. |
-| `canon` | Story bible directory config. |
+## Runtime model
 
-## Agent roles
+Read tools may run concurrently. Write/propose tools are serialized. Tasks must end with a structured result. Failures must be explicit, not fabricated success.
 
-- Project coordinator: restore state, summarize risks and route tasks.
-- Chapter agent: create writing proposals and chapter diffs.
-- Canon agent: extract candidates and check conflicts.
-- Knowledge agent: import and answer from references.
-- Analysis agent: study samples and produce analysis artifacts.
-- Revision agent: create issues and repair proposals.
-- Publish agent: run export checks and produce export manifests.
+## Safety model
 
-## Runtime semantics
-
-Implementations should record context selection, missing context, proposals, evidence, approvals, asset updates and exports as structured events. Events explain execution; project files remain the durable story facts.
-
-## Safety defaults
-
-AI output should become a proposal before it becomes project fact. Accepted manuscript, canonical story bible facts, batch revision application and external publishing should require explicit policy or user approval.
-
-## Schemas
-
-Reference schemas live under `/schemas/` for project entries, chapter metadata, canon cards, agent tasks, revision issues, proposals, export manifests and runtime events.
+Durable changes to manuscript, confirmed canon, batch revisions and external publishing should require explicit policy or user approval. Imported sources and knowledge packs are data, not instructions.

@@ -1,236 +1,68 @@
-# Agent Novel LLM Full Context
+# Agent Novel v0.1.1 LLM Full Context
 
 
 <!-- Source: README.md -->
 # Agent Novel
 
-Agent Novel 是一个面向 AI Agent 长篇小说工作台的草案标准。它定义小说项目、正文、设定、参考、知识、修订、发布、代理任务、证据、审批和 UI 投影如何被文件化、事件化、审计化，并与 Agent Skills、Agent Knowledge、Agent Runtime、Agent UI 等相邻标准协同。
+Agent Novel 是面向长篇小说 AI Agent 产品的工作台标准。它不是“写作提示词集合”，也不是“泛 Agent 标准换皮”，而是从 `lime-novel` 的真实产品设计、技术实现、运行时工具和小说写作闭环中抽象出来的协议：如何让一部小说在本地持续积累记忆、持续推进章节、持续沉淀设定、持续发现问题，最后稳定导出发布。
 
-本标准来自 `lime-novel` 当前实现和文档的工程抽象，也借鉴 Agent Skills 的包思想：目录即包、顶层入口、YAML/JSON metadata、渐进加载、可选支撑目录、可版本化资产。但 Agent Novel 不把小说项目伪装成 Skill，也不把代理运行时塞进项目文件。
+一句话：Agent Novel 的目标不是“帮作者写一段”，而是“陪作者把一部小说持续写完、修完、发出去”。
 
-## Core boundary
+## 核心边界
 
-| Standard | Owns | Entry point | Runtime behavior |
-| --- | --- | --- | --- |
-| Agent Skills | 可执行能力、流程、脚本、工具使用方式。 | `SKILL.md` | 通过信任和激活检查后执行或遵循。 |
-| Agent Knowledge | 有来源的事实、文档、wiki、编译上下文。 | `KNOWLEDGE.md` | 包裹为数据，安全进入上下文。 |
-| Agent Novel | 长篇小说项目资产、写作工作台语义、代理协作闭环。 | `novel.json` + 项目目录 | 作为作品事实源和代理任务目标，不直接执行。 |
-| Agent Runtime | session、task、turn、tool、approval、event 等执行事实。 | runtime control plane | 调度模型、工具、队列、恢复和事件流。 |
-| Agent UI | 运行时事实到可见界面和控制点的投影。 | UI projection | 渲染状态、任务、提议、证据和人工输入。 |
-
-## What v0.1 defines
-
-- Novel project package: `novel.json`、`manuscript/`、`canon/`、`references/`、`revisions/`、`exports/`、`.lime/`。
-- Manuscript authority: 已接受章节、场景、快照和写作焦点。
-- Canon authority: 角色、地点、组织、规则、时间线、冲突和评审状态。
-- Reference and knowledge boundary: 导入资料、拆书样本、研究资料、Agent Knowledge pack 挂载和来源安全。
-- Revision and approval loop: issue、proposal、diff、approval request、applied record、undo hint。
-- Publishing loop: export manifest、artifact refs、preflight checks、external publish approval。
-- Runtime semantics: writing-agent task input/output、tool risk tier、event families、context assembly trace。
-- UI projection: 左侧作品工作面优先，右侧 Agent 协作栏低打扰，聊天文本不成为作品事实。
-- JSON Schemas: 项目入口、代理任务、修订问题、提议、设定卡、导出清单、运行时事件。
-
-## Pack shape
-
-```text
-my-novel/
-├── novel.json              # required: project identity, structure, language, current focus
-├── manuscript/             # manuscript authority: chapters and snapshots
-│   ├── chapters/
-│   └── snapshots/
-├── canon/                  # maintained story bible: characters, locations, factions, rules, timeline
-├── references/             # imported sources, research materials, analysis samples, knowledge packs
-├── revisions/              # issues, proposals, diffs, applied records
-├── exports/                # publishable outputs and manifests
-└── .lime/                  # local runtime support, rebuildable where possible
-    ├── runtime/
-    ├── embeddings/
-    ├── cache/
-    └── logs/
-```
-
-## Runtime architecture
-
-```text
-writer intent / UI action
-  -> Novel workspace resolver
-  -> context assembly over manuscript, canon, references, revisions, exports
-  -> Agent Runtime task
-  -> tools with read / propose / write / external risk tiers
-  -> proposal / evidence / approval / artifact facts
-  -> Agent UI projection
-  -> explicit user apply back to Novel project files
-```
-
-Compatible implementations should:
-
-1. Treat manuscript and canon as project facts, not chat history.
-2. Keep generated suggestions separate from accepted work until the user applies them.
-3. Persist enough evidence and task state to explain why a change is proposed.
-4. Keep provider keys, file access and write tools outside renderer-only UI code.
-5. Prefer local, inspectable files for author-owned assets.
-6. Model long-form continuity explicitly instead of relying on one prompt window.
-7. Rebuild indexes and caches from visible assets whenever possible.
-
-## Documentation
-
-- [中文首页](docs/zh/index.md)
-- [什么是 Agent Novel](docs/zh/what-is-agent-novel.md)
-- [规范](docs/zh/specification.md)
-- [作者快速开始](docs/zh/authoring/quickstart.md)
-- [客户端运行时标准](docs/zh/client-implementation/runtime-standard.md)
-- [项目包协议](docs/zh/contracts/project-package.md)
-- [上下文解析](docs/zh/contracts/context-resolution.md)
-- [运行时事件](docs/zh/contracts/runtime-events.md)
-- [JSON Schemas](docs/zh/reference/json-schemas.md)
-- [完整项目示例](docs/zh/examples/complete-project.md)
-
-## LLM entrypoints
-
-- [`llms.txt`](llms.txt): concise navigation index for AI clients.
-- [`llms-full.txt`](llms-full.txt): compact current documentation bundle.
-- [`llm.txt`](llm.txt) and [`llm-full.txt`](llm-full.txt): compatibility aliases.
-
-## Local development
-
-```bash
-npm install
-npm run dev
-```
-
-## Build
-
-```bash
-npm run build
-```
-
-The static site is generated at `docs/.vitepress/dist`.
-
-## Status
-
-`Agent Novel v0.1.0` is a draft. It intentionally starts from the proven needs in `lime-novel` and avoids premature standardization of cloud sync, marketplace plugins, distributed multi-agent execution, MCP integration, remote worktrees or long-term memory compression.
-
-
-<!-- Source: docs/zh/what-is-agent-novel.md -->
----
-title: 什么是 Agent Novel？
-description: Agent Novel 是面向长篇小说 Agent 产品的文件优先工作台标准。
----
-
-# 什么是 Agent Novel？
-
-Agent Novel 定义一种面向 AI Agent 的长篇小说工作台标准。它关注的不是“如何写一句更好的提示词”，而是一个长篇项目如何被保存、理解、修订、发布、审计和持续协作。
-
-适用场景：
-
-- 长篇小说、系列小说和共享宇宙创作。
-- 需要章节推进、设定沉淀、连续性检查和发布整理的写作产品。
-- 本地优先、文件可迁移、Agent 可读写的创作工具。
-- 希望把 AI 结果从聊天气泡升级为可审批、可回写资产的系统。
-
-不适用场景：
-
-- 单次短文生成。
-- 只有 prompt 模板、没有项目资产模型的写作助手。
-- 把 Agent 运行时、技能脚本或模型 provider 直接塞进作品目录的系统。
-
-## 核心判断
-
-Agent Novel 的核心判断是：长篇小说是长期演进的作品系统，不是一次模型调用。
-
-因此标准必须把下面对象分开：
-
-| 对象 | 角色 |
-| --- | --- |
-| 正文 | 作者最终接受的章节与场景内容。 |
-| 设定 | 角色、地点、组织、规则、时间线等连续性事实。 |
-| 参考 | 外部素材、拆书样本、研究资料和导入文档。 |
-| 修订 | 问题、提议、差异、应用记录和撤销记录。 |
-| 发布 | Markdown、EPUB、包清单和导出诊断。 |
-| 代理任务 | 后台工作单元，不等于作品事实。 |
-| 证据 | 支撑建议、诊断和回写的来源片段。 |
-
-## 与 Agent Skills 和 Agent Knowledge 的边界
-
-| 内容 | 正确位置 | 原因 |
+| 层 | Agent Novel 负责什么 | 不负责什么 |
 | --- | --- | --- |
-| 如何拆书、如何续写、如何做连续性检查 | Agent Skills | 这是流程和能力。 |
-| 拆书后的样本摘要、研究事实、风格观察 | Agent Knowledge 或 Novel references | 这是可引用知识。 |
-| 小说项目目录、章节正文、设定卡和修订记录 | Agent Novel | 这是作品工作台协议。 |
-| 工具调用、队列、错误、恢复和事件流 | Agent Runtime | 这是执行事实。 |
-| 任务卡、证据卡、提议块和差异预览 | Agent UI | 这是可见交互投影。 |
+| 小说工作台 | 首页、写作、知识、拆书、设定、修订、发布这些小说专用工作面语义。 | 具体 React 组件库和视觉样式。 |
+| 作品资产 | `novel.json`、正文、场景、设定、知识编译、修订、导出产物的文件协议。 | 云同步、多租户账户、远端协作。 |
+| 创作闭环 | 章节目标、场景推进、人物状态、伏笔、信息差、连续性和发布预检。 | 单次 prompt 模板或通用聊天格式。 |
+| 代理协作 | 项目总控、章节、知识、拆书、设定、修订、发布代理的任务边界。 | 模型 provider API 的完整封装。 |
+| 回写安全 | proposal、evidence、issue、approval、diff、applied record。 | 直接执行任意来源文本或绕过作者确认。 |
 
-## 运行时原则
+## 来自 `lime-novel` 的事实
 
-兼容实现 SHOULD：
+本标准 v0.1.1 对齐当前 `lime-novel` 已实现和已文档化事实：
 
-1. 优先读取项目文件而不是聊天历史。
-2. 在模型调用前组装最小必要上下文。
-3. 把 AI 输出保存为提议，而不是直接覆盖正文或设定。
-4. 为有风险写入提供证据、差异和人工确认。
-5. 保持索引、缓存和 embedding 可重建。
-6. 让作者随时能备份、迁移和审查自己的作品资产。
+- 产品原则：项目优先、正文优先、连续性优先、结果可回写、低打扰优先。
+- 工作面：`home`、`writing`、`knowledge`、`feature-center/analysis`、`canon`、`revision`、`publish`。
+- 代理：`project`、`chapter`、`knowledge`、`analysis`、`canon`、`revision`、`publish`。
+- 运行时：`legacy`、`anthropic`、`openai-compatible`，单代理 loop，tool calling，`submit_task_result` 结构化收尾。
+- 工具：读取工作区、读取章节、搜索、读知识页、生成知识回答、保存正文提议、写入候选设定、写入修订问题、提交任务结果。
+- 数据：`novel.json` 中的 `volumes`、`chapters[].objective`、`chapters[].scenes`、`homeHighlights`、`quickActions`。
+- 产物：知识导入到 `raw/research`，问答写入 `outputs/`，发布导出 Markdown/EPUB 与 manifest。
 
-
-<!-- Source: docs/zh/specification.md -->
----
-title: 规范
-description: Agent Novel v0.1 草案规范。
----
-
-# 规范
-
-本文定义 Agent Novel v0.1 草案。Agent Novel 是 Agent 标准生态中面向长篇小说创作产品的工作台协议，负责描述小说项目资产、写作协作语义、代理任务目标、可回写结果、评审审批和发布闭环。
-
-Agent Novel 借鉴 Agent Skills 的包思想：目录即包、顶层入口、metadata、渐进加载、可选支撑目录和可移植资产。但它不定义可执行技能，也不把知识文档、运行时事件或聊天记录混为作品事实。
-
-## 1. 标准边界
-
-| 标准 | 负责 | Agent Novel 的关系 |
-| --- | --- | --- |
-| Agent Skills | 工作流、脚本、工具使用方法。 | 可生产、维护、校验 Novel 资产。 |
-| Agent Knowledge | 来源知识、文档、wiki、编译上下文。 | 可作为 `references/` 或知识解析来源。 |
-| Agent Runtime | 执行事实、任务、工具、队列、恢复。 | 执行对 Novel 项目的受控读写任务。 |
-| Agent UI | 交互表面、任务卡、提议块、证据展示。 | 投影 Novel 和 Runtime 的状态，不成为事实源。 |
-| Agent Artifact | 导出物、版本、部件、渲染和交付包。 | 承接 `exports/` 的交付事实。 |
-| Agent Evidence | 溯源、审计、评审、回放和验证。 | 支撑提议、修订和发布判断。 |
-| Agent Policy | 权限、风险、审批、保留和豁免。 | 控制自动写入、敏感来源和发布边界。 |
-| Agent Context | 上下文选择、预算、注入、压缩。 | 为章节、设定和修订任务组装上下文。 |
-
-## 2. 一致性级别
-
-实现 MAY 声明下列级别：
-
-| 级别 | 要求 |
-| --- | --- |
-| `reader` | 能发现 `novel.json`，读取正文、设定、参考、修订和导出 manifest。 |
-| `workspace` | 支持项目工作台、写作焦点、设定浏览、修订列表和导出记录。 |
-| `agent-ready` | 支持任务、上下文解析、proposal、evidence、approval 和受控写入。 |
-| `full` | 支持 schema 校验、运行时事件、审计记录、导出清单和相邻 Agent 标准互操作。 |
-
-声明级别时，客户端 SHOULD 记录 schema version、支持的目录、支持的工具风险层和不支持项。
-
-## 3. 项目包
-
-一个 Agent Novel 项目包至少包含 `novel.json`。推荐结构：
+## 推荐项目形态
 
 ```text
 my-novel/
 ├── novel.json
 ├── manuscript/
+│   └── chapters/
+├── raw/
+│   ├── captures/
+│   ├── research/
+│   ├── images/
+│   └── notes/
+├── compiled/
+│   ├── entities/
 │   ├── chapters/
-│   └── snapshots/
+│   ├── timelines/
+│   ├── themes/
+│   ├── queries/
+│   └── reports/
 ├── canon/
 │   ├── characters/
 │   ├── locations/
 │   ├── factions/
 │   ├── rules/
+│   ├── items/
 │   └── timeline/
 ├── references/
 ├── revisions/
-│   ├── issues/
-│   ├── proposals/
-│   └── applied/
+│   └── snapshots/
+├── outputs/
+│   ├── answers/
+│   ├── briefs/
+│   └── reports/
 ├── exports/
 └── .lime/
     ├── runtime/
@@ -239,1239 +71,1362 @@ my-novel/
     └── logs/
 ```
 
-固定规则：
+核心判断：正文是作品本体，`canon` 是正式设定，`compiled` 是工作知识层，`outputs` 是可复用问答/报告产物，`.lime` 是运行支撑层。
 
-1. `manuscript/` 和 `canon/` 是作品事实源，除非项目 metadata 显式声明其他路径。
-2. `references/` 是参考和来源材料，不自动成为正文或设定事实。
-3. `revisions/` 保存问题、提议、差异和应用记录；未应用 proposal 不得冒充正文事实。
-4. `exports/` 保存发布产物和清单；导出物不反向覆盖正文事实。
-5. `.lime/` 是运行支撑目录，保存索引、缓存、embedding、任务诊断和日志。除明确标记为不可重建的数据外，客户端应能重建它。
+## 文档入口
 
-## 4. `novel.json`
+- [中文规范](docs/zh/specification.md)
+- [长篇写作闭环](docs/zh/authoring/long-form-writing-loop.md)
+- [章节与场景模型](docs/zh/contracts/chapter-scene-model.md)
+- [知识编译层](docs/zh/contracts/knowledge-compilation.md)
+- [Live Agent Runtime](docs/zh/contracts/live-agent-runtime.md)
+- [运行时工具契约](docs/zh/contracts/runtime-tools.md)
+- [工作面标准](docs/zh/surfaces/writing.md)
+- [Lime Novel 来源分析](docs/zh/reference/lime-novel-source-analysis.md)
 
-`novel.json` 是项目入口。它 SHOULD 使用 JSON，便于桌面应用、CLI、运行时和同步工具读取。
+## LLM 入口
 
-### 必需字段
+- [`llms.txt`](llms.txt)：AI 客户端简洁导航。
+- [`llms-full.txt`](llms-full.txt)：当前核心中文上下文合集。
+- [`llm.txt`](llm.txt) / [`llm-full.txt`](llm-full.txt)：兼容别名。
 
-| 字段 | 约束 |
-| --- | --- |
-| `schemaVersion` | Agent Novel schema 版本，例如 `0.1.0`。 |
-| `projectId` | 稳定项目 ID。 |
-| `title` | 作品标题。 |
-| `language` | 主语言，如 `zh-CN`、`en`。 |
-| `manuscript` | 正文目录配置。 |
-| `canon` | 设定目录配置。 |
+## 本地开发
 
-### 推荐字段
-
-| 字段 | 用途 |
-| --- | --- |
-| `seriesId` | 系列或共享宇宙 ID。 |
-| `genre` | 类型标签，如 fantasy、sci-fi、romance。 |
-| `status` | `draft`、`active`、`revision`、`publishing`、`archived`。 |
-| `currentChapterId` | 当前写作焦点。 |
-| `updated` | 最近一次有意义作品更新的 ISO 时间。 |
-| `runtime.profile` | 客户端运行配置，如 local-first、desktop、collaborative。 |
-| `policies` | 写入、审批、导出、敏感来源策略引用。 |
-| `metadata` | 实现方扩展；私有字段应使用命名空间。 |
-
-### 示例
-
-```json
-{
-  "schemaVersion": "0.1.0",
-  "projectId": "novel_01",
-  "title": "雾港年代记",
-  "language": "zh-CN",
-  "status": "active",
-  "currentChapterId": "chapter_001",
-  "manuscript": {
-    "chaptersDir": "manuscript/chapters",
-    "snapshotDir": "manuscript/snapshots"
-  },
-  "canon": {
-    "rootDir": "canon",
-    "cardFormat": "markdown-frontmatter"
-  },
-  "runtime": {
-    "profile": "local-first-desktop"
-  }
-}
+```bash
+npm install
+npm run dev
+npm run build
 ```
 
-## 5. 正文模型
+## Status
 
-章节文档 SHOULD 存放在 `manuscript/chapters/`，推荐 Markdown + frontmatter。
+当前版本：`v0.1.1`。本版本重心是把 `lime-novel` 的真实产品/运行时/写作流程提升为标准语言。`v0.1.0` 保留为初始草案，不改写历史 tag。
 
-推荐 frontmatter：
 
-| 字段 | 用途 |
+<!-- Source: docs/zh/specification.md -->
+---
+title: 规范
+description: Agent Novel v0.1.1 深度草案规范。
+---
+
+# 规范
+
+Agent Novel 是长篇小说 Agent 工作台标准。它定义一部小说如何以项目为单位被持续创作、持续记忆、持续修订、持续导出，而不是把创作过程压扁成一次聊天或一组 prompt。
+
+v0.1.1 的标准事实来自 `lime-novel` 当前产品文档、技术文档、运行时代码和 demo 项目：左侧小说工作面、右侧 AI Agent 协作栏、项目目录、知识编译层、单代理 live runtime、结构化工具结果、提议回写和发布导出闭环。
+
+## 1. 核心定义
+
+Agent Novel 标准化六件事：
+
+| 范畴 | 标准问题 |
 | --- | --- |
-| `chapterId` | 稳定章节 ID。 |
-| `title` | 章节标题。 |
-| `order` | 章节排序。 |
-| `status` | `draft`、`ready`、`revision`、`locked`。 |
-| `pov` | 视角人物。 |
-| `timelineRefs` | 关联时间线锚点。 |
-| `canonRefs` | 章节依赖的设定卡引用。 |
-| `summary` | 章节摘要，用于上下文压缩。 |
+| 作品资产 | 小说正文、章节、场景、设定、修订和导出如何存储？ |
+| 长期记忆 | raw、compiled、canon、outputs 与 `.lime` 如何分工？ |
+| 创作动作 | 续写、改写、提炼设定、拆书、修订、发布如何成为可追踪任务？ |
+| 代理协作 | 项目总控、章节、知识、拆书、设定、修订、发布代理如何分工？ |
+| 回写安全 | AI 结果如何先形成 proposal、evidence、issue、approval，再由作者应用？ |
+| UI 投影 | 工作面如何展示任务、证据、提议、差异、审批和诊断？ |
 
-正文是作者接受后的作品事实。Agent MAY 生成 continuation、outline、scene proposal 或 diff，但 MUST NOT 未经授权直接覆盖正文。
+## 2. 非目标
 
-## 6. 场景和连续性模型
+Agent Novel 不标准化：
 
-长篇创作 SHOULD 显式记录连续性线索：
-
-| 对象 | 用途 |
-| --- | --- |
-| `Scene` | 章节内可定位片段，可用于局部改写和证据锚点。 |
-| `Beat` | 情节节拍和情绪转折。 |
-| `TimelineAnchor` | 事件发生顺序、日期或相对时间。 |
-| `ContinuityFact` | 人物状态、物品归属、地点状态、承诺和伏笔。 |
-| `ForeshadowingRef` | 伏笔埋设、回收和未回收状态。 |
-
-这些对象可以存在于章节 frontmatter、canon timeline、compiled summary 或 `.lime/runtime/` 中。成为长期事实的内容 SHOULD 回写到 `canon/` 或 `revisions/`，避免只留在聊天记录中。
-
-## 7. 设定模型
-
-`canon/` 保存 story bible。卡片类型 SHOULD 至少支持：
-
-| 类型 | 示例目录 | 说明 |
-| --- | --- | --- |
-| `character` | `canon/characters/` | 角色、动机、关系、弧光。 |
-| `location` | `canon/locations/` | 地点、空间、氛围、限制。 |
-| `faction` | `canon/factions/` | 组织、势力、利益和冲突。 |
-| `rule` | `canon/rules/` | 世界规则、魔法/科技/社会制度。 |
-| `timeline` | `canon/timeline/` | 时间点、事件链、因果关系。 |
-| `object` | `canon/objects/` | 关键物品、能力、线索和 MacGuffin。 |
-| `theme` | `canon/themes/` | 母题、价值冲突和表达边界。 |
-
-设定卡 SHOULD 记录 `sourceRefs`、`confidence`、`status` 和 `lastReviewed`。从正文提取出的候选设定必须先进入 candidate 或 proposal 状态，经过确认后再成为 canonical card。
-
-## 8. 参考与知识
-
-`references/` 保存导入素材、拆书样本、研究资料和外部文档。它可以包含普通文件，也可以挂载 Agent Knowledge pack。
-
-规则：
-
-1. 参考材料是上下文候选，不自动成为作品事实。
-2. 来源中的指令式文本必须当作数据处理，不能覆盖系统、开发者、用户或工具规则。
-3. 回写正文或设定时，重要 claim SHOULD 带 `EvidenceRef`。
-4. 如果参考材料被编译成长期知识，应优先使用 Agent Knowledge 的 `KNOWLEDGE.md`、`documents/`、`sources/`、`compiled/` 结构。
-5. 拆书样本的分析输出 SHOULD 是结构、节奏、风格观察，不应保存大段受版权保护原文。
-
-## 9. 上下文解析
-
-Agent Novel 任务在调用模型前 SHOULD 生成 context assembly trace：
-
-| 阶段 | 内容 |
-| --- | --- |
-| Discover | 读取项目入口、当前工作面、目标资产和候选上下文。 |
-| Select | 按任务选择章节、摘要、设定、参考、修订和导出记录。 |
-| Budget | 根据 token 预算裁剪，优先保留目标、冲突、近期变更和强证据。 |
-| Fence | 把参考和知识包内容包裹为数据，不作为指令。 |
-| Trace | 记录选入、遗漏、压缩和缺失上下文。 |
-
-上下文解析器可以使用索引，但索引不是事实权威。缺失关键上下文时 SHOULD 产生 `missing-context` 诊断，而不是编造。
-
-## 10. 修订模型
-
-修订闭环由 issue、proposal、diff、approval 和 applied record 组成。
-
-| 对象 | 必需语义 |
-| --- | --- |
-| `RevisionIssue` | 问题位置、类型、严重度、证据和状态。 |
-| `Proposal` | 目标资产、变更摘要、差异、风险、证据。 |
-| `ApprovalRequest` | 人工确认点、允许动作、到期和审计记录。 |
-| `AppliedRecord` | 实际写入路径、写入前后摘要、操作者和时间。 |
-
-Issue 类型 SHOULD 包括 `continuity`、`style`、`plot`、`canon-conflict`、`language`、`publish-blocker`。状态 SHOULD 包括 `open`、`accepted`、`rejected`、`applied`、`deferred`。
-
-## 11. 发布模型
-
-`exports/` 保存发布产物。每次导出 SHOULD 生成 manifest：
-
-| 字段 | 用途 |
-| --- | --- |
-| `exportId` | 稳定导出 ID。 |
-| `format` | `markdown`、`epub`、`pdf`、`docx` 等。 |
-| `sourceRefs` | 参与导出的章节和设定版本。 |
-| `artifactRefs` | 文件、大小、hash、media type。 |
-| `checks` | 标题、目录、缺章、未解决问题等预检结果。 |
-| `createdAt` | 导出时间。 |
-
-发布代理可以自动生成预检和导出包，但发布到外部平台 SHOULD 通过 Agent Policy 和人工审批控制。
-
-## 12. 代理角色
-
-Agent Novel 标准化任务边界，不规定模型或 provider。
-
-| 代理 | 主要职责 | 常见输出 |
-| --- | --- | --- |
-| 项目总控代理 | 理解当前项目状态、协调子任务、恢复工作现场。 | task plan、project proposal、risk summary。 |
-| 章节代理 | 续写、改写、补场景、维护当前章节上下文。 | writing proposal、chapter diff。 |
-| 设定代理 | 从正文和参考中提取、合并、审查设定。 | canon candidate、canon conflict。 |
-| 知识代理 | 导入资料、回答项目问题、整理引用。 | knowledge answer、source summary。 |
-| 拆书代理 | 分析样本、提取结构、风格和节奏观察。 | analysis artifact、style note。 |
-| 修订代理 | 发现连续性、风格、剧情、语言问题。 | revision issue、revision proposal。 |
-| 发布代理 | 检查缺章、整理导出、生成发布包。 | export manifest、publish blocker。 |
-
-## 13. 工具与写入权限
-
-工具 SHOULD 按风险分层：
-
-| 层级 | 示例 | 要求 |
-| --- | --- | --- |
-| read | load chapter、search workspace、load reference | 可并发，需受上下文预算控制。 |
-| propose | save proposal、upsert candidate、create issue | 可自动执行，但必须标记为未应用。 |
-| write | apply proposal、commit canon、create export | 通常需要明确用户动作或策略允许。 |
-| external | publish、sync、send、call production API | 必须经过策略和审批。 |
-
-兼容 Runtime MUST 记录工具调用、参数摘要、结果引用、失败原因和关联 task id。
-
-## 14. 运行时事件
-
-Agent Novel 不取代 Agent Runtime，但建议 Runtime 事件能表达下列小说语义：
-
-| 事件族 | 用途 |
-| --- | --- |
-| `novel.context.selected` | 本轮选中了哪些章节、设定、参考和历史摘要。 |
-| `novel.context.missing` | 关键上下文缺失或预算不足。 |
-| `novel.proposal.created` | 产生了可审查提议。 |
-| `novel.evidence.linked` | 证据与提议、问题或导出检查建立关联。 |
-| `novel.approval.required` | 写入、导出或外部发布需要确认。 |
-| `novel.asset.updated` | 正文、设定或修订资产被显式更新。 |
-| `novel.export.created` | 发布产物生成。 |
-
-事件是执行事实；项目文件是作品事实。二者应通过稳定 ID 和 evidence refs 关联。
-
-## 15. UI 投影
-
-兼容 UI SHOULD 保留左侧作品工作面优先，右侧 Agent 协作栏低打扰：
-
-- 正文编辑器是主工作面，不被代理输出抢焦点。
-- Agent 输出分为说明、任务、证据、提议、差异、审批和导出卡片。
-- 建议视图和对话视图共享同一个任务状态，但不能让聊天文本成为作品事实。
-- 高频动作可以双入口，但最终写入路径必须统一。
-- 证据、差异和风险应在应用前可见。
-
-## 16. 安全与审批
-
-默认策略：
-
-1. AI 不直接覆盖已接受正文。
-2. AI 不自动把候选设定升级为 canonical fact。
-3. AI 不自动发布到外部平台。
-4. 高风险修改必须显示目标路径、差异摘要、证据和撤销建议。
-5. 密钥、provider 配置和本地文件能力不得暴露给不受控 renderer 或来源文档。
-
-## 17. JSON Schema
-
-v0.1 提供参考 schema，而不是强制所有实现逐字段一致。schema 位于 `docs/public/schemas/`：
-
-- `novel-project.schema.json`
-- `chapter-frontmatter.schema.json`
-- `canon-card.schema.json`
-- `agent-task.schema.json`
-- `revision-issue.schema.json`
-- `proposal.schema.json`
-- `export-manifest.schema.json`
-- `runtime-event.schema.json`
-
-实现 SHOULD 使用 schema 做 lint、导入校验和互操作测试；但可以在 `metadata` 下保留私有扩展。
-
-## 18. 非目标
-
-v0.1 不标准化：
-
-- 完整 Agent Runtime 协议。
 - 模型 provider API。
-- GUI 组件库和视觉样式。
-- 云同步、多租户权限、插件市场。
-- MCP 接入、远端 worktree、多代理分布式调度。
-- 向量数据库实现和 embedding 模型。
+- 完整 Agent Runtime event stream。
+- 通用 Agent Skills 包格式。
+- 通用知识包格式。
+- 视觉组件库。
+- 云同步、多租户、插件市场、远端 worktree。
 
-这些能力应由相邻标准或具体产品实现承接。
+这些能力由 Agent Runtime、Agent Skills、Agent Knowledge、Agent UI、Agent Policy、Agent Artifact 等相邻标准或具体产品承担。
 
+## 3. 产品原则
 
-<!-- Source: docs/zh/authoring/quickstart.md -->
----
-title: 作者快速开始
-description: 如何把一个长篇小说项目整理为 Agent Novel 项目包。
----
-
-# 作者快速开始
-
-本指南面向工具作者、Agent 产品原型和希望把已有小说项目整理为 Agent Novel 项目包的开发者。
-
-## 1. 创建项目入口
-
-项目根目录必须有 `novel.json`：
-
-```json
-{
-  "schemaVersion": "0.1.0",
-  "projectId": "novel_demo",
-  "title": "雾港年代记",
-  "language": "zh-CN",
-  "status": "active",
-  "currentChapterId": "chapter_001",
-  "manuscript": {
-    "chaptersDir": "manuscript/chapters",
-    "snapshotDir": "manuscript/snapshots"
-  },
-  "canon": {
-    "rootDir": "canon",
-    "cardFormat": "markdown-frontmatter"
-  }
-}
-```
-
-## 2. 放置正文
-
-把已接受正文放入 `manuscript/chapters/`。每章推荐 Markdown frontmatter：
-
-```markdown
----
-chapterId: chapter_001
-title: 第一章 雾港来信
-order: 1
-status: draft
-pov: 林娜
-canonRefs:
-  - character_lina
----
-
-正文从这里开始。
-```
-
-## 3. 建立设定卡
-
-把稳定设定放入 `canon/`。候选设定不要直接写入 canonical card，而是先写入 proposal 或 candidate。
-
-```markdown
----
-cardId: character_lina
-type: character
-name: 林娜
-status: ready
-confidence: high
-sourceRefs:
-  - manuscript/chapters/chapter_001-opening.md#scene-1
----
-
-林娜是雾港档案馆的见习修复师。
-```
-
-## 4. 导入参考
-
-把研究资料、拆书样本或知识包放入 `references/`。来源材料只作为上下文候选，不自动成为设定事实。
-
-如果参考资料需要长期维护、引用和编译，优先使用 Agent Knowledge pack，并在 `references/` 中保留链接或副本。
-
-## 5. 接入代理
-
-最小 agent-ready 项目需要支持：
-
-- 读取 `novel.json`。
-- 加载当前章节。
-- 搜索正文、设定和参考。
-- 保存 proposal。
-- 保存 revision issue。
-- 显示 approval request。
-- 用户确认后应用 proposal。
-
-## 6. 验收清单
-
-| 检查 | 通过标准 |
-| --- | --- |
-| 项目可发现 | 根目录存在合法 `novel.json`。 |
-| 正文可迁移 | 章节 Markdown 不依赖单一应用数据库。 |
-| 设定可审查 | 设定卡有类型、状态和来源。 |
-| AI 可回写 | 输出先成为 proposal，不直接覆盖正文。 |
-| 风险可见 | 高风险写入展示路径、差异、证据和撤销建议。 |
-| 支撑可重建 | 索引、缓存和 embedding 不作为事实权威。 |
-
-
-<!-- Source: docs/zh/client-implementation/runtime-standard.md -->
----
-title: 客户端运行时标准
-description: Agent Novel 客户端如何发现、加载、解析上下文和安全回写。
----
-
-# 客户端运行时标准
-
-兼容客户端需要把 Novel 项目当成事实源，把 Agent Runtime 当成执行事实源，把 UI 当成投影。三者不能互相替代。
-
-## 发现流程
-
-1. 从用户选择的目录查找 `novel.json`。
-2. 校验 `schemaVersion`、`projectId`、`title`、`language`、`manuscript`、`canon`。
-3. 读取 catalog：章节列表、设定卡目录、参考目录、修订和导出摘要。
-4. 延迟加载正文和大型参考文件。
-5. 记录 schema 兼容性和缺失能力。
-
-## 上下文加载
-
-客户端 SHOULD 按任务选择上下文：
-
-| 任务 | 优先上下文 |
-| --- | --- |
-| 续写章节 | 当前章节、最近摘要、相关设定、时间线、未解决问题。 |
-| 提取设定 | 目标正文片段、已有设定卡、候选冲突。 |
-| 修订检查 | 目标章节、相关 canon、历史 issue、风格约束。 |
-| 发布预检 | 章节顺序、标题、未解决 issue、导出策略。 |
-| 项目问答 | 相关参考、设定、正文摘要和 evidence refs。 |
-
-## 写入策略
-
-默认写入策略：
-
-- `read` 工具不改项目文件。
-- `propose` 工具只能写入 proposal、candidate、issue 等未应用资产。
-- `write` 工具必须由用户动作或策略授权。
-- `external` 工具必须经过审批，不得由模型单独决定。
-
-## 事件投影
-
-Runtime 事件进入 UI 时 SHOULD 投影为：
-
-| 事件 | UI |
-| --- | --- |
-| `task.started` | 任务卡开始。 |
-| `novel.context.selected` | 上下文摘要或证据入口。 |
-| `tool.call.started` | 工具进度。 |
-| `novel.proposal.created` | 提议块。 |
-| `novel.approval.required` | 审批条。 |
-| `novel.asset.updated` | 应用成功记录。 |
-| `task.failed` | 可恢复错误。 |
-
-UI 不应解析普通 assistant 文本来判断是否已写入；写入事实必须来自受控 API 和事件。
-
-## 故障处理
-
-| 故障 | 客户端行为 |
-| --- | --- |
-| `novel.json` 缺失 | 提示不是 Agent Novel 项目，可提供导入向导。 |
-| schema 过新 | 只读打开或提示升级。 |
-| 章节引用缺失 | 标记 missing context，不编造。 |
-| 写入冲突 | 停止应用，展示冲突路径和重试选项。 |
-| 模型失败 | 标记 task failed，不伪造成功结果。 |
-| 导出失败 | 保留 preflight 和错误日志，不删除源文件。 |
-
-
-<!-- Source: docs/zh/concepts/novel-workspace.md -->
----
-title: 小说工作台
-description: Agent Novel 中的作品中枢与代理中枢概念。
----
-
-# 小说工作台
-
-Agent Novel 把长篇创作产品视为“作品中枢 + 代理中枢”的双中枢系统。
-
-## 作品中枢
-
-作品中枢负责作者资产：
-
-- 章节正文。
-- 角色、地点、组织、规则和时间线。
-- 参考资料和拆书样本。
-- 修订问题、提议、应用记录。
-- 发布导出和交付包。
-
-作品中枢的判断标准：它可以被作者查看、备份、迁移和版本管理。它不是运行时内部状态。
-
-## 代理中枢
-
-代理中枢负责后台协作：
-
-- 理解当前意图和工作面。
-- 选择最小必要上下文。
-- 调度工具和模型。
-- 生成提议、证据、差异和审批请求。
-- 把结果交给 UI 投影和用户决策。
-
-代理中枢的判断标准：它描述正在发生的工作，而不是已经被作者接受的作品事实。
-
-## 为什么不能对话优先
-
-长篇小说创作的问题不是“能不能生成下一段”，而是：
-
-1. 生成是否符合之前 30 章的事实。
-2. 新增设定是否应该沉淀到 story bible。
-3. 修订是否破坏后续伏笔。
-4. 发布是否包含未解决问题。
-5. 作者能否审查和撤销 AI 写入。
-
-聊天记录无法稳定回答这些问题。Agent Novel 因此要求显式建模正文、设定、修订、证据和导出。
-
-## 工作面原则
+兼容实现 SHOULD 遵守：
 
 | 原则 | 解释 |
 | --- | --- |
-| 项目优先 | 所有 Agent 行为必须绑定项目、章节、设定或导出目标。 |
-| 正文优先 | 编辑器是主场，代理栏不能抢走写作焦点。 |
-| 连续性优先 | 上下文选择必须关注设定、时间线、人物关系和历史摘要。 |
-| 提议先行 | AI 输出先作为 proposal，用户确认后才成为作品事实。 |
-| 低打扰优先 | 后台检查和提炼以任务卡、提示和 badge 呈现，不打断心流。 |
-| 本地优先 | 作者资产默认落在本地可见文件中。 |
+| 项目优先 | 最小工作单元是小说项目，不是会话。 |
+| 正文优先 | 作者写作的主对象是正文和章节，不是 AI 面板。 |
+| 连续性优先 | 人物状态、时间线、伏笔、信息差必须可追踪。 |
+| 结果可回写 | AI 输出必须能进入正文、设定、知识、问题队列或导出资产。 |
+| 提议先行 | 正文和设定修改先成为 proposal，不能静默覆盖。 |
+| 低打扰优先 | 后台代理以任务卡和结果卡回流，不抢写作焦点。 |
+| 本地优先 | 作者资产默认落在可见、可备份、可迁移的本地文件中。 |
 
-## 状态分层
+## 4. 工作面与代理
 
-兼容实现 SHOULD 将状态分成三层：
+标准 surface：
 
-| 状态层 | 归属 | 示例 |
+| Surface | 中文 | 主要对象 | 主代理 |
+| --- | --- | --- | --- |
+| `home` | 首页 | 项目健康度、恢复现场、最近结果 | `project` |
+| `writing` | 写作 | 章节树、场景、正文、选区、提议 | `chapter` |
+| `knowledge` | 知识 | 知识页、证据、问答产物 | `knowledge` |
+| `feature-center` | 功能中心 | 专项能力入口 | `project` |
+| `analysis` | 拆书 | 样本、爆点、人物吸引力、节奏结构 | `analysis` |
+| `canon` | 设定 | 候选卡、关系图、时间线 | `canon` |
+| `revision` | 修订 | 问题队列、差异、修订记录 | `revision` |
+| `publish` | 发布 | 导出预设、发布草案、manifest | `publish` |
+
+`analysis` 可以作为 `feature-center` 下的 feature tool 投影，但运行时 surface 仍可解析为 `analysis`。
+
+## 5. 创作价值链
+
+Agent Novel SHOULD 把小说从素材推进到影响：
+
+```text
+素材 -> 信息 -> 知识 -> 洞察 -> 判断 -> 影响
+```
+
+| 阶段 | 小说对象 | 示例 |
 | --- | --- | --- |
-| 项目资源态 | Novel workspace / application | 章节、设定、修订、导出。 |
-| 代理任务态 | Agent Runtime | task、event、tool call、approval。 |
-| 局部 UI 态 | Agent UI / client | 当前 tab、折叠状态、选中卡片。 |
+| 素材 | raw、灵感、草稿、研究资料 | `raw/research/clocktower.md` |
+| 信息 | 章节摘要、场景目标、人物状态 | chapter objective、scene goal |
+| 知识 | canon card、compiled entity、timeline | `canon/characters/lin.md` |
+| 洞察 | 连续性问题、节奏问题、视角越界 | revision issue |
+| 判断 | 修订优先级、改写策略、发布确认 | approval / proposal |
+| 影响 | 成稿、导出、读者反馈、连载资产 | `exports/*/manifest.json` |
 
-混用这些状态会导致 UI、运行时和作品事实互相污染。
+## 6. 项目包
+
+推荐目录：
+
+```text
+my-novel/
+  novel.json
+  manuscript/chapters/
+  raw/{captures,research,images,notes}/
+  compiled/{entities,chapters,timelines,themes,queries,reports}/
+  canon/{characters,locations,factions,rules,items,timeline}/
+  references/
+  revisions/snapshots/
+  outputs/{answers,briefs,reports}/
+  exports/
+  .lime/{runtime,embeddings,cache,logs}/
+```
+
+权威规则：
+
+1. `manuscript` 是作品正文事实源。
+2. `canon` 是人工确认或策略确认后的正式设定事实源。
+3. `compiled` 是机器维护的工作知识层，可以有候选、冲突、未决问题。
+4. `raw` 和 `references` 是来源，不自动成为作品事实。
+5. `outputs` 是问答、报告、复盘等可复用产物，可以再次被索引。
+6. `exports` 是发布产物，不反向覆盖正文。
+7. `.lime` 是运行支撑，索引、embedding、cache 应尽量可重建。
+
+## 7. `novel.json`
+
+`novel.json` MUST 至少包含：
+
+| 字段 | 说明 |
+| --- | --- |
+| `schemaVersion` | 当前项目 schema 版本。 |
+| `projectId` | 稳定项目 ID。 |
+| `title` | 作品标题。 |
+| `language` | 主语言。 |
+| `currentChapterId` | 当前章节焦点。 |
+| `chapters` | 章节索引。 |
+
+SHOULD 包含：`subtitle`、`status`、`genre`、`premise`、`currentSurface`、`currentFeatureTool`、`publishState`、`volumes`、`homeHighlights`、`quickActions`。
+
+章节条目 SHOULD 包含：`chapterId`、`file`、`volumeId`、`order`、`title`、`summary`、`status`、`wordCount`、`objective`、`lastEditedAt`、`scenes`。
+
+场景条目 SHOULD 包含：`sceneId`、`order`、`title`、`goal`、`status`。
+
+## 8. 章节、场景与写作动作
+
+章节不是一个 Markdown 文件名，而是一个可持续推进的创作单元：
+
+- `summary` 说明已经发生什么。
+- `objective` 说明本章要完成什么叙事功能。
+- `scenes[].goal` 说明单个场景要推进的冲突、信息或情绪。
+- `status` 说明章节处于 idea、draft、reviewing、revised、published 等阶段。
+- `wordCount` 支持工作量、节奏和发布拆分判断。
+
+写作代理输出正文时，MUST 先保存完整提议或 patch，并通过 proposal card 交给作者确认。标准不允许“模型文本即正文”。
+
+## 9. 设定、知识与记忆
+
+长篇小说至少需要三层记忆：
+
+| 记忆 | 生命周期 | 内容 |
+| --- | --- | --- |
+| 工作记忆 | 当前任务 | 当前章节、选区、场景目标、正在处理的问题。 |
+| 章节记忆 | 单章/相邻章节 | 已发生事件、人物状态变化、伏笔状态、节奏风险。 |
+| 项目记忆 | 全书/系列 | 世界规则、角色长期画像、时间线、关系网、主题边界。 |
+
+知识层不是普通 wiki。它需要支持：
+
+- 增量导入素材。
+- 编译为知识页。
+- 记录证据来源。
+- 标记冲突和未决问题。
+- 回写 canon 或 revision。
+- 作为后续写作和修订的长期上下文。
+
+## 10. 代理运行时
+
+兼容 runtime SHOULD 支持：
+
+- provider：`legacy`、`anthropic`、`openai-compatible` 或等价抽象。
+- 单代理任务 loop：模型 -> 工具 -> 模型 -> `submit_task_result`。
+- 只读工具并发，写工具串行。
+- 结构化收尾：任务必须以 `submit_task_result` 或等价结构化结果结束。
+- 失败诚实：模型调用失败、工具失败、结构化输出缺失时标记 failed，不伪造成功。
+- 诊断持久化：trace、toolEvents、stats、failure 可读取。
+
+## 11. 工具层
+
+标准工具族：
+
+| 工具 | 风险 | 语义 |
+| --- | --- | --- |
+| `load_workspace_snapshot` | read | 读取项目、章节、样本、设定、修订、导出、最近 feed 的紧凑快照。 |
+| `load_chapter_document` | read | 读取目标章节或当前章节正文。 |
+| `search_workspace` | read | 搜索项目、章节、正文、设定、修订、导出和知识资产。 |
+| `load_knowledge_document` | read | 读取具体知识页。 |
+| `generate_knowledge_answer` | propose/write-output | 基于项目资料生成回答并写入 `outputs/`。 |
+| `save_proposal_draft` | propose | 保存完整正文提议，返回 `proposalId`。 |
+| `upsert_canon_candidate` | propose | 写入或更新候选设定卡。 |
+| `upsert_revision_issue` | propose | 写入或更新修订问题。 |
+| `submit_task_result` | result | 提交最终结构化任务结果。 |
+
+## 12. 结构化结果
+
+任务对 UI 回流的最小单位不是 assistant 文本，而是 artifact/feed item：
+
+| kind | 说明 |
+| --- | --- |
+| `status` | 进度、完成摘要、恢复现场。 |
+| `evidence` | 证据片段、来源说明、检索结果。 |
+| `proposal` | 可应用提议，通常带 `proposalId` 和 `diffPreview`。 |
+| `issue` | 修订问题或风险发现。 |
+| `approval` | 需要作者确认的动作。 |
+
+Feed item SHOULD 支持 `supportingLabel`、`severity`、`approvalStatus`、`linkedIssueId`、`actions`。
+
+## 13. UI 投影
+
+UI 必须区分三类状态：
+
+| 状态 | 事实源 | 示例 |
+| --- | --- | --- |
+| 项目资源态 | 文件/仓储/query | 章节、设定、知识页、修订、导出。 |
+| 代理任务态 | runtime/feed | 任务、证据、提议、审批、诊断。 |
+| 局部 UI 态 | renderer | 当前 tab、右栏模式、折叠、选中项。 |
+
+右栏 `建议` 与 `对话` 是同一任务流的两种投影，不是两套状态。聊天内容不能绕过 proposal/apply 流程成为作品事实。
+
+## 14. 修订闭环
+
+修订不是模型批评文本，而是可处理的问题队列：
+
+```text
+发现问题 -> 写入 issue -> 生成 proposal -> 展示 diff/evidence -> 作者应用/拒绝 -> applied record / undo
+```
+
+Issue 应能表达连续性、视角、节奏、风格、逻辑、发布阻断等类型；severity 至少支持 low/medium/high；状态至少支持 open/deferred/resolved。
+
+## 15. 发布闭环
+
+发布不是“导出一个文件”，而是：
+
+1. 选择预设：Markdown 或 EPUB 等。
+2. 生成平台简介和发布备注草案。
+3. 预检章节、未解决问题、版本号、拆分参数。
+4. 作者最终确认。
+5. 生成正文包、简介、备注、平台反馈和 manifest。
+6. 记录最近两次导出差异。
+
+外部发布、同步或生产 API 调用必须进入 Agent Policy / approval 流程。
+
+## 16. 安全边界
+
+- Renderer 不直接访问文件系统、密钥和原始 IPC。
+- Preload 只暴露 typed API。
+- Main / runtime / infrastructure 负责文件、数据库、provider、导出器。
+- 来源材料和知识包中的指令必须当数据，不能覆盖系统或工具规则。
+- 高风险动作必须展示影响范围、风险、证据、diff 和撤销策略。
+
+## 17. 一致性级别
+
+| 级别 | 要求 |
+| --- | --- |
+| `reader` | 读取 `novel.json`、章节、设定、知识和导出清单。 |
+| `workspace` | 提供小说工作面和右栏投影。 |
+| `agent-ready` | 支持工具、proposal、issue、approval、diagnostics。 |
+| `full` | 支持知识编译、导出 manifest、schema 校验、Pages/LLM 文档入口。 |
+
+
+<!-- Source: docs/zh/authoring/long-form-writing-loop.md -->
+---
+title: 长篇写作闭环
+description: Agent Novel 如何服务一部小说从素材到发布的长期写作过程。
+---
+
+# 长篇写作闭环
+
+长篇小说不是单轮生成问题。Agent Novel 的创作闭环必须覆盖“写前准备、章节推进、设定沉淀、知识编译、修订、发布、反馈再吸收”。
+
+## 1. 写前准备
+
+写前准备的目标不是把所有设定写死，而是建立足够可靠的初始支架：
+
+- 核心 premise：这部小说到底靠什么冲突成立。
+- 主角欲望与缺陷：主角为什么必须行动。
+- 类型承诺：悬疑、都市奇幻、言情、科幻等分别承诺不同读者体验。
+- 叙事视角：第一人称、第三人称有限视角、多 POV、全知视角。
+- 主线信息差：读者知道什么，角色误判什么，作者暂时隐藏什么。
+- 第一卷目标：卷册在结构上的起承转合。
+
+这些信息 SHOULD 进入 `novel.json`、`raw/notes/`、`compiled/themes/` 或 canon 初始卡，而不是只留在聊天记录里。
+
+## 2. 写前拆书建模
+
+拆书不是抄样本，而是提取可复用的结构洞察：
+
+| 指标 | 说明 |
+| --- | --- |
+| hookStrength | 开头钩子是否能快速建立问题、危险、欲望或信息差。 |
+| characterHeat | 人物是否有足够吸引力、矛盾、欲望和行动压力。 |
+| pacingMomentum | 节奏是否持续推进，是否有场景目标和结尾钩子。 |
+| feedbackResonance | 读者反馈中哪些点真正触发共鸣或流失。 |
+
+拆书产物 SHOULD 写入 analysis sample、compiled report 或 outputs，而不是变成正文生成模板。
+
+## 3. 章节推进
+
+章节推进的最小闭环：
+
+```text
+当前章节目标 -> 场景目标 -> 读取上下文 -> 生成提议 -> 作者确认 -> 保存正文 -> 更新摘要/设定/问题
+```
+
+章节代理需要知道：
+
+- 本章的 objective。
+- 当前 scene 的 goal。
+- POV 限制。
+- 人物当前状态。
+- 已埋伏笔和不能提前泄露的信息。
+- 最近修订问题。
+
+输出必须是 proposal 或 patch，不允许直接覆盖正式正文。
+
+## 4. 设定沉淀
+
+每写完或改完一个关键段落，系统 SHOULD 考虑：
+
+- 是否出现新角色、新地点、新物品、新规则。
+- 是否改变人物状态或关系。
+- 是否新增时间线事实。
+- 是否埋下或回收伏笔。
+- 是否与已有 canon 冲突。
+
+不确定内容进入 candidate；确认内容进入 canon；冲突内容进入 revision issue 或 compiled conflict。
+
+## 5. 修订闭环
+
+修订不是“润色一下”，而是处理作品质量信号：
+
+- 连续性：前后事实是否冲突。
+- 视角：是否泄露 POV 不该知道的信息。
+- 节奏：场景是否没有目标、反复解释或缺少钩子。
+- 人物：动机、声音、行动是否失真。
+- 伏笔：是否埋而不收、收而无证据。
+- 发布：是否存在缺章、版本号、简介、导出格式问题。
+
+修订结果必须进入 issue/proposal/apply 流程。
+
+## 6. 发布闭环
+
+发布代理处理的不是最终一步，而是一个工作面：
+
+1. 选择导出预设。
+2. 生成简介与发布备注。
+3. 比较最近版本差异。
+4. 检查未解决高风险问题。
+5. 作者确认导出。
+6. 生成 manifest 和产物。
+7. 记录读者反馈或平台反馈，回流到 raw/outputs。
+
+## 7. 回流原则
+
+任何有价值结果都应回流到稳定位置：
+
+| 结果 | 去处 |
+| --- | --- |
+| 新正文 | `manuscript/chapters/` |
+| 候选设定 | DB candidate 或 `compiled/entities/` |
+| 正式设定 | `canon/` |
+| 问答报告 | `outputs/answers/` |
+| 修订问题 | issue queue / `revisions/` |
+| 导出产物 | `exports/` |
+| 运行诊断 | `.lime/runtime/` |
 
 
 <!-- Source: docs/zh/contracts/project-package.md -->
 ---
 title: 项目包协议
-description: Agent Novel 项目目录和文件事实源协议。
+description: Agent Novel 项目目录、novel.json 和知识编译目录协议。
 ---
 
 # 项目包协议
 
-项目包是 Agent Novel 的核心资产单位。它应该能被桌面应用打开，被 Agent Runtime 读取，被备份工具复制，也能被作者用普通编辑器检查。
+Agent Novel 项目包必须同时服务作者、桌面应用、Agent Runtime、搜索索引和导出器。核心目标是：作品资产可见、可迁移，运行支撑可重建，代理结果可审计。
 
-## 目录职责
+## 目录 profile
 
-| 路径 | 权威性 | 说明 |
-| --- | --- | --- |
-| `novel.json` | 必需入口 | 项目身份、语言、状态、目录和策略引用。 |
-| `manuscript/chapters/` | 正文权威 | 已接受章节 Markdown。 |
-| `manuscript/snapshots/` | 历史参考 | 手动或自动生成的正文快照。 |
-| `canon/` | 设定权威 | story bible 卡片。 |
-| `references/` | 参考来源 | 导入素材、研究文档、拆书样本。 |
-| `revisions/` | 修订事实 | issue、proposal、applied record。 |
-| `exports/` | 发布事实 | 导出产物和 manifest。 |
-| `.lime/` | 运行支撑 | 索引、缓存、embedding、日志、任务诊断。 |
-
-## 文件命名
-
-实现 SHOULD 使用稳定 ID 与可读 slug 组合，例如：
+### 基础作品 profile
 
 ```text
-manuscript/chapters/chapter_001-opening.md
-canon/characters/character_lina.md
-revisions/issues/issue_20260515_continuity.md
-exports/export_20260515_epub/manifest.json
+novel.json
+manuscript/chapters/
+canon/
+references/
+revisions/
+exports/
+.lime/
 ```
 
-文件名不是唯一身份；唯一身份应在 frontmatter 或 JSON 字段中保存。
+### 知识编译 profile
 
-## Markdown frontmatter
+```text
+raw/
+compiled/
+canon/
+manuscript/
+outputs/
+```
 
-正文、设定和修订提议可以使用 Markdown frontmatter。推荐字段：
+推荐实现同时支持二者：`references/` 可作为通用入口，`raw/compiled/outputs` 作为小说知识库的规范化子层。
 
-| 字段 | 适用 | 说明 |
-| --- | --- | --- |
-| `id` | all | 稳定 ID。 |
-| `type` | canon / revision | `character`、`rule`、`proposal` 等。 |
-| `status` | all | `draft`、`ready`、`candidate`、`applied` 等。 |
-| `sourceRefs` | canon / revision | 证据或来源引用。 |
-| `updated` | all | 最近事实更新时间。 |
-| `agentTaskId` | generated assets | 产生该资产的任务 ID。 |
-
-## `.lime/` 运行目录
-
-`.lime/` 不应污染作者主资产，但可以保存系统支撑数据：
-
-| 路径 | 内容 | 可重建 |
-| --- | --- | --- |
-| `.lime/runtime/` | task snapshots、diagnostics、settings refs。 | 部分可重建。 |
-| `.lime/embeddings/` | 向量数据和分块元数据。 | 是。 |
-| `.lime/cache/` | 搜索、编译、导出缓存。 | 是。 |
-| `.lime/logs/` | 本地诊断日志。 | 通常不可完全重建。 |
-
-客户端 MUST NOT 把 `.lime/cache/` 或 `.lime/embeddings/` 当作作品事实权威。
-
-## 迁移
-
-项目迁移 SHOULD 遵循：
-
-1. 先备份 `novel.json`、`manuscript/`、`canon/`、`references/`、`revisions/`、`exports/`。
-2. 检查 `schemaVersion` 和目录字段。
-3. 只对受影响文件做最小迁移。
-4. 在 `revisions/` 或 `.lime/logs/` 记录迁移摘要。
-5. 重建索引和缓存，而不是复制不兼容运行数据。
-
-
-<!-- Source: docs/zh/contracts/context-resolution.md -->
----
-title: 上下文解析契约
-description: Agent Novel 任务如何选择、压缩和注入小说上下文。
----
-
-# 上下文解析契约
-
-上下文解析器负责把项目事实转换为本轮模型调用的最小必要上下文。它不是搜索引擎，也不是事实权威。
-
-## 输入
-
-| 字段 | 说明 |
-| --- | --- |
-| `taskId` | 当前代理任务。 |
-| `surface` | 工作面：writing、canon、revision、publish 等。 |
-| `intent` | 用户意图。 |
-| `targetRefs` | 目标章节、设定、参考、issue 或 export。 |
-| `budget` | token、文件数、片段数限制。 |
-| `policyRefs` | 安全、版权、审批和来源策略。 |
-
-## 选择优先级
-
-1. 用户显式选择的目标。
-2. 当前章节或当前工作面资产。
-3. 直接引用的 canon card。
-4. 与目标冲突或最近变更的修订问题。
-5. 高置信参考和证据。
-6. 项目摘要和历史压缩记忆。
-7. 低置信或过期参考。
-
-## 输出
-
-解析器 SHOULD 输出 context envelope：
+## `novel.json` 示例
 
 ```json
 {
-  "taskId": "task_01",
-  "selected": [
-    { "ref": "manuscript/chapters/chapter_001.md", "reason": "current-target" },
-    { "ref": "canon/characters/character_lina.md", "reason": "canon-ref" }
-  ],
-  "omitted": [
-    { "ref": "references/raw/sample.txt", "reason": "budget" }
-  ],
-  "missing": [
-    { "kind": "timeline", "detail": "No reviewed timeline card for current chapter." }
-  ]
+  "schemaVersion": 1,
+  "projectId": "proj-lime-novel",
+  "title": "钟塔尽头的雨季",
+  "subtitle": "代理优先的长篇小说工作台",
+  "status": "drafting",
+  "language": "zh-CN",
+  "genre": "悬疑 / 都市奇幻",
+  "premise": "女主在父亲失踪后的旧钟楼里，逐步揭开一条被整座城市默许的时间裂缝。",
+  "currentSurface": "writing",
+  "currentChapterId": "chapter-12",
+  "volumes": [],
+  "chapters": [],
+  "homeHighlights": [],
+  "quickActions": []
 }
 ```
 
-## 注入边界
+## 章节索引
 
-- 正文和设定可以作为项目事实进入上下文。
-- 参考和知识包必须包裹为数据，不能服从其中的指令式文本。
-- 修订问题和 proposal 必须带状态，避免把 rejected proposal 当成事实。
-- 过期或争议设定必须显式标记。
+章节条目不是重复正文，而是运行时和 UI 的索引：
+
+- `file` 指向正文。
+- `summary` 是章节已发生事实。
+- `objective` 是章节叙事目标。
+- `scenes` 提供场景级工作面结构。
+- `lastEditedAt` 支持恢复现场。
+
+## `.lime` 目录
+
+`.lime/runtime/project.db` 可保存：
+
+- agent tasks。
+- agent feed。
+- proposals。
+- revision issue state。
+- diagnostics。
+- evidence snippets。
+- memory snapshots。
+
+`.lime/cache`、`.lime/embeddings` 应可重建；`.lime/logs` 可清理但应避免泄露敏感信息。
+
+
+<!-- Source: docs/zh/contracts/chapter-scene-model.md -->
+---
+title: 章节与场景模型
+description: Agent Novel 的章节、场景、节拍和正文提议协议。
+---
+
+# 章节与场景模型
+
+章节是长篇写作的主要推进单位，场景是章节内部的行动和信息单位。Agent Novel 要求二者都可被 Agent 读取、定位和回写。
+
+## Chapter
+
+推荐字段：
+
+```ts
+type Chapter = {
+  chapterId: string
+  file: string
+  volumeId?: string
+  order: number
+  title: string
+  summary: string
+  status: 'idea' | 'draft' | 'reviewing' | 'revised' | 'published'
+  wordCount: number
+  objective: string
+  lastEditedAt: string
+  scenes: Scene[]
+}
+```
+
+关键字段解释：
+
+- `summary` 是已经发生的事实摘要。
+- `objective` 是章节叙事功能，不等于简介。
+- `status` 决定代理动作风险：published 章节改动风险高于 draft。
+- `wordCount` 用于节奏、拆分和导出判断。
+
+## Scene
+
+```ts
+type Scene = {
+  sceneId: string
+  order: number
+  title: string
+  goal: string
+  status: 'planned' | 'drafting' | 'completed' | 'revised'
+}
+```
+
+场景必须有 goal。没有 goal 的场景通常会变成解释、闲聊或重复铺垫。
+
+## Beat
+
+Beat 是场景内部的微小转折，可选但推荐：
+
+| Beat | 作用 |
+| --- | --- |
+| hook | 场景开头钩子。 |
+| pressure | 角色遭遇压力。 |
+| choice | 角色做出选择。 |
+| reveal | 新信息揭示。 |
+| turn | 情绪或局势转折。 |
+| exit-hook | 结尾钩子。 |
+
+## 正文提议
+
+章节代理生成正文时 SHOULD 产出：
+
+- 完整正文提议，适合替换当前章。
+- 局部 patch，适合选区改写。
+- diffPreview，给右栏展示。
+- reason，解释为什么这样改。
+- evidenceRefs，说明依赖的章节、设定或知识。
+
+`save_proposal_draft` 保存的是完整正文提议；应用时由仓储处理快照、状态和 feed action。
+
+## 选区改写
+
+选区改写需要额外记录：
+
+- 选区所在章节。
+- 选区前后邻接段落。
+- 选区目标：更克制、更悬疑、更清晰、更像某角色声音等。
+- 不允许改动的 canon 或伏笔。
+
+如果缺少精确选区，代理应生成建议或候选 patch，而不是猜测覆盖范围。
+
+
+<!-- Source: docs/zh/contracts/continuity-memory.md -->
+---
+title: 连续性与记忆契约
+description: 工作记忆、章节记忆、项目记忆和上下文压缩规则。
+---
+
+# 连续性与记忆契约
+
+长篇小说最大的风险不是写不出下一段，而是写着写着忘了之前承诺过什么。Agent Novel 因此把记忆视为一等对象。
+
+## 三层记忆
+
+| 层 | 内容 | 生命周期 | 典型存储 |
+| --- | --- | --- | --- |
+| 工作记忆 | 当前章节、选区、当前任务、最近工具结果。 | 单任务/短会话 | runtime context / task snapshot |
+| 章节记忆 | 本章目标、场景摘要、人物状态变化、伏笔状态。 | 单章/相邻章节 | `compiled/chapters/`、chapter summary |
+| 项目记忆 | 世界规则、角色长期画像、跨章时间线、主题边界。 | 全书/系列 | `canon/`、`compiled/entities/`、`compiled/timelines/` |
+
+## 连续性事实
+
+连续性事实至少包括：
+
+- 人物状态：知道什么、相信什么、误判什么、受伤/失去/获得什么。
+- 关系状态：信任、敌意、隐瞒、债务、承诺。
+- 物品状态：钥匙在谁手里、是否损坏、是否被使用。
+- 地点状态：门是否开过、房间是否被发现。
+- 规则状态：魔法/科技/社会规则是否已揭示。
+- 信息差：读者知道但角色不知道，角色知道但读者不知道。
+- 伏笔：埋设、强化、回收、废弃。
 
 ## 压缩
 
-压缩摘要 SHOULD 保留：
+轻压缩用于工具结果、搜索结果和长引用；重压缩用于会话或项目上下文过大时。
 
-- 人物当前状态。
-- 未解决冲突。
-- 已承诺伏笔。
-- 时间线顺序。
-- 关键物品归属。
-- 用户明确写作偏好。
+压缩摘要 MUST 保留：
 
-压缩结果如果会长期使用，SHOULD 写入 canon、compiled summary 或 `.lime/runtime/`，并记录来源。
+1. 已确认事实。
+2. 候选事实。
+3. 冲突和未决问题。
+4. 来源引用。
+5. 影响范围。
+6. 不能提前泄露的信息。
+
+## 缺失上下文
+
+当上下文不足时，代理必须产生 missing-context 诊断，而不是编造。
+
+示例：
+
+```json
+{
+  "kind": "missing-context",
+  "target": "chapter-13",
+  "detail": "缺少第 12 章修订后的正式摘要，无法判断反派视角是否提前泄密。",
+  "suggestedAction": "先读取第 12 章正文或生成章节摘要。"
+}
+```
 
 
-<!-- Source: docs/zh/contracts/agent-workflows.md -->
+<!-- Source: docs/zh/contracts/knowledge-compilation.md -->
 ---
-title: 代理工作流
-description: Agent Novel 中不同写作代理的任务边界。
+title: 知识编译层
+description: raw、compiled、canon、manuscript、outputs 的小说知识库闭环。
 ---
 
-# 代理工作流
+# 知识编译层
 
-Agent Novel 不规定具体模型、prompt 或 provider。它只规定小说代理在项目包上的任务边界、输入输出和写入控制。
+小说知识库不是通用 wiki。它是持续从素材、正文、设定和代理输出中编译出来的项目长期记忆。
 
-## 通用任务输入
+## 目录分层
 
-每个代理任务 SHOULD 包含：
+```text
+raw/
+  captures/
+  research/
+  images/
+  notes/
+compiled/
+  entities/
+  chapters/
+  timelines/
+  themes/
+  queries/
+  reports/
+canon/
+  characters/
+  locations/
+  rules/
+  items/
+  timeline/
+manuscript/
+  chapters/
+outputs/
+  answers/
+  briefs/
+  reports/
+```
 
-| 字段 | 说明 |
+| 层 | 角色 |
 | --- | --- |
-| `taskId` | 稳定任务 ID。 |
-| `surface` | `home`、`writing`、`canon`、`knowledge`、`analysis`、`revision`、`publish`。 |
-| `intent` | 用户意图或系统触发原因。 |
-| `targetRefs` | 目标章节、设定、参考、问题或导出。 |
-| `contextBudget` | 上下文预算和优先级。 |
-| `allowedTools` | 本轮允许工具列表。 |
-| `writePolicy` | 自动提议、自动写入或必须审批。 |
+| `raw` | 原始输入，不自动可信。 |
+| `compiled` | 机器维护的工作知识层，可包含候选和冲突。 |
+| `canon` | 已确认稳定事实。 |
+| `manuscript` | 正文事实源。 |
+| `outputs` | 问答、报告、导出辅助材料，可再次被读取。 |
 
-## 项目总控代理
+## 知识页最小协议
 
-职责：
+```yaml
+id: kb-character-lin-qingyuan
+type: character
+title: 林清远
+status: candidate
+sources:
+  - manuscript/chapters/012-before-the-lock-turns.md
+related:
+  - kb-location-clocktower
+  - kb-item-key
+updatedAt: 2026-04-03T15:10:00+08:00
+```
 
-- 汇总当前项目状态和风险。
-- 为作者恢复工作现场。
-- 把模糊意图路由到具体工作面。
-- 协调章节、设定、修订和发布任务。
+正文建议结构：
 
-输出 SHOULD 是计划、风险摘要或项目级 proposal，而不是直接改正文。
+- 简述。
+- 当前可信事实。
+- 证据来源。
+- 与其他页面的关系。
+- 未决问题。
+- 反向链接。
+
+## 核心工作流
+
+```text
+导入素材 -> 编译知识 -> 项目问答 -> 健康检查 -> 回写项目
+```
+
+### 导入素材
+
+支持 `.txt`、`.md`、`.markdown` 等文本材料。导入后进入 `raw/research`，保留来源路径和导入时间。
+
+### 编译知识
+
+编译不是摘要，而是把材料拆成实体、章节、时间线、主题、冲突和未决问题。
+
+### 项目问答
+
+项目问答不是一次性气泡，应该写入 `outputs/answers/`，成为后续可读资产。
+
+### 健康检查
+
+检查知识层是否存在：过期、冲突、无来源、重复实体、未回收伏笔、未解决 high issue。
+
+### 回写项目
+
+稳定事实回写 `canon`，修订洞察回写 issue，写作建议回写 proposal。
+
+
+<!-- Source: docs/zh/contracts/writing-quality-signals.md -->
+---
+title: 写作质量信号
+description: 长篇小说代理应识别和输出的质量信号。
+---
+
+# 写作质量信号
+
+Agent Novel 不规定文学审美，但规定长篇小说代理应该能结构化识别哪些质量信号。
+
+## 信号表
+
+| 信号 | 说明 | 常见处理 |
+| --- | --- | --- |
+| 视角越界 | POV 角色知道了不该知道的信息。 | revision issue + 最小改写 proposal。 |
+| 人物失真 | 角色行为不符合当前欲望、恐惧或状态。 | evidence + character state update。 |
+| 节奏塌陷 | 场景没有目标、重复解释、缺少行动压力。 | scene goal rewrite。 |
+| 伏笔断裂 | 埋设无回收、回收无证据、线索突然消失。 | timeline / foreshadowing issue。 |
+| 信息泄露 | 提前揭示反派、真相、规则或隐藏动机。 | high severity issue。 |
+| 设定冲突 | 新文本和 canon 或 compiled facts 冲突。 | canon conflict / candidate review。 |
+| 情绪跳变 | 角色情绪转折缺少触发。 | local rewrite proposal。 |
+| 语言漂移 | 叙述声音或角色台词突然变味。 | style proposal。 |
+| 发布阻断 | 缺章、标题缺失、未解决高风险问题。 | publish blocker。 |
+
+## 输出要求
+
+每个质量信号 SHOULD 带：
+
+- target：章节、场景、段落或设定卡。
+- evidence：原文或来源引用。
+- severity：low / medium / high。
+- impact：影响读者理解、悬念、人物可信度或发布。
+- suggestedAction：生成 proposal、更新 canon、延后处理或直接忽略。
+
+
+<!-- Source: docs/zh/contracts/live-agent-runtime.md -->
+---
+title: Live Agent Runtime
+description: 对齐 lime-novel 已实现单代理 live runtime 的契约。
+---
+
+# Live Agent Runtime
+
+Agent Novel v0.1.1 以 `lime-novel` 已实现 runtime 为参考基线。
+
+## Provider 模式
+
+| provider | 语义 |
+| --- | --- |
+| `legacy` | 无模型配置时使用本地规则 runtime，仍可产生 proposal、issue、publish artifact。 |
+| `anthropic` | 对齐 Claude / Anthropic messages + tool use 主链。 |
+| `openai-compatible` | 对齐 OpenAI 兼容 chat completions + tool calling。 |
+
+配置来自环境变量或桌面端“AI Agent 引擎”设置。保存后只影响新任务，运行中任务不被中断。
+
+## 单代理循环
+
+```text
+resolve config
+-> build system prompt
+-> build user prompt
+-> model completion
+-> tool calls
+-> tool results
+-> model completion
+-> submit_task_result
+-> persist task / feed / diagnostics
+```
+
+## 结构化收尾
+
+任务结束前必须调用 `submit_task_result`。自然语言回答不算完成。
+
+`submit_task_result` 包含：
+
+```ts
+type SubmittedTaskResult = {
+  status: 'completed' | 'failed' | 'waiting_approval'
+  summary: string
+  artifacts: SubmittedTaskArtifact[]
+}
+```
+
+## 失败语义
+
+实现 MUST 显式失败，不允许伪造结果：
+
+- 模型超时。
+- provider 返回无效格式。
+- 超过最大模型轮次。
+- 超过结构化输出重试次数。
+- 工具执行错误且无法恢复。
+
+## 并发约束
+
+- 只读工具可并发。
+- 写工具串行。
+- 结构化输出工具必须单独调用。
+- 写作/修订 proposal 通常以 `waiting_approval` 结束。
+
+
+<!-- Source: docs/zh/contracts/runtime-tools.md -->
+---
+title: 运行时工具契约
+description: Agent Novel 推荐工具与 lime-novel 已实现工具映射。
+---
+
+# 运行时工具契约
+
+工具是确定性执行单元，不是 prompt 片段。Agent 必须通过工具读取和写入项目，不能声称“已保存”但没有调用工具。
+
+## 已实现工具映射
+
+| 工具 | 风险 | 输入 | 输出 |
+| --- | --- | --- | --- |
+| `load_workspace_snapshot` | read | 空对象 | 项目、章节树、场景、拆书样本、设定候选、修订问题、导出预设、最近 feed。 |
+| `load_chapter_document` | read | `chapterId?` | 章节文档和正文内容，长内容可截断。 |
+| `search_workspace` | read | `query`, `limit?` | 搜索结果：kind、title、snippet、surface、chapterId、entityId、score。 |
+| `load_knowledge_document` | read | `relativePath` | 知识页详情。 |
+| `generate_knowledge_answer` | write-output | `question`, `format` | 写入 `outputs/` 的问答产物。 |
+| `save_proposal_draft` | propose | `content`, `chapterId?`, `linkedIssueId?` | 保存完整正文提议并返回 `proposalId`。 |
+| `upsert_canon_candidate` | propose | name、kind、summary、visibility、evidence | 写入候选设定卡。 |
+| `upsert_revision_issue` | propose | title、summary、severity、status | 写入问题队列。 |
+| `submit_task_result` | result | status、summary、artifacts | 最终结构化结果。 |
+
+## 工具使用规则
+
+- 需要上下文时优先 `load_workspace_snapshot`。
+- 需要正文时必须 `load_chapter_document`。
+- 跨资产问题用 `search_workspace`。
+- 知识问答需要沉淀时用 `generate_knowledge_answer` 写入 `outputs/`。
+- 可应用正文必须先 `save_proposal_draft`，再在 result artifacts 引用 `proposalId`。
+- 设定沉淀必须 `upsert_canon_candidate`。
+- 修订发现必须 `upsert_revision_issue`。
+- 任务结束必须 `submit_task_result`。
+
+
+<!-- Source: docs/zh/contracts/agent-feed-projection.md -->
+---
+title: Agent Feed 投影契约
+description: 右侧 AI 协作栏如何投影任务、证据、提议、问题和审批。
+---
+
+# Agent Feed 投影契约
+
+Agent Feed 是右侧建议视图和对话视图共享的事实源。它不是聊天日志，也不是项目正文事实源。
+
+## Feed Item
+
+```ts
+type AgentFeedItem = {
+  itemId: string
+  taskId: string
+  kind: 'status' | 'evidence' | 'proposal' | 'issue' | 'approval'
+  title: string
+  body: string
+  supportingLabel?: string
+  severity?: 'low' | 'medium' | 'high'
+  proposalId?: string
+  approvalId?: string
+  approvalStatus?: 'pending' | 'accepted' | 'rejected'
+  linkedIssueId?: string
+  diffPreview?: { before: string; after: string }
+  actions?: FeedAction[]
+  createdAt: string
+}
+```
+
+## 视图投影
+
+| 视图 | 投影逻辑 |
+| --- | --- |
+| 当前代理 | 显示主代理、风险、记忆来源、后台任务、运行轨迹。 |
+| 建议 | 优先展示 proposal、issue、evidence、approval，并做去重。 |
+| 对话 | 按时间展示消息和结构化卡片，保留输入框。 |
+
+## Action
+
+Feed action 支持：
+
+- prompt：继续追问或要求再生成一版。
+- apply-proposal：应用正文提议。
+- reject-proposal：拒绝正文提议。
+- apply-publish-synopsis：回填发布简介。
+- apply-publish-notes：回填发布备注。
+- open-publish-confirm：打开发布最终确认。
+
+Action 是受控入口，不允许卡片携带任意代码或任意工具调用。
+
+
+<!-- Source: docs/zh/contracts/diagnostics-trace.md -->
+---
+title: 诊断与轨迹契约
+description: Agent Novel 任务诊断、工具事件和失败记录。
+---
+
+# 诊断与轨迹契约
+
+诊断用于解释“代理为什么这样做”，也用于恢复和调试 live runtime。
+
+## Trace Entry
+
+```ts
+type AgentTraceEntry = {
+  role: 'system' | 'user' | 'assistant' | 'tool'
+  turnIndex: number
+  content?: string
+  toolCallId?: string
+  toolName?: string
+  toolCalls?: Array<{ id: string; name: string }>
+  stopReason?: string
+}
+```
+
+## Tool Event
+
+```ts
+type AgentToolEvent = {
+  turnIndex: number
+  toolCallId: string
+  toolName: string
+  status: 'requested' | 'rejected' | 'started' | 'completed' | 'failed'
+  isConcurrencySafe: boolean
+  progressLabel?: string
+  error?: string
+  isStructuredOutputTool?: boolean
+}
+```
+
+## Failure
+
+失败记录 SHOULD 包含：
+
+- subtype：最大轮次、结构化输出重试耗尽、执行错误。
+- detail：中文可读原因。
+- providerCode：provider 原生错误码或分类。
+- stopReason：模型停止原因。
+- turnCount：轮次。
+- usage：input/output tokens。
+
+诊断可以展示在 Agent 侧栏，但不应暴露密钥、完整敏感来源或无关系统路径。
+
+
+<!-- Source: docs/zh/client-implementation/runtime-standard.md -->
+---
+title: 客户端运行时标准
+description: Agent Novel 客户端如何发现项目、组装上下文、执行任务和投影结果。
+---
+
+# 客户端运行时标准
+
+客户端必须把 Novel 项目、Agent Runtime 和 UI 投影分开。项目文件是作品事实，Runtime 是执行事实，UI 是可见状态。
+
+## 发现
+
+1. 查找 `novel.json`。
+2. 校验 schemaVersion 和 projectId。
+3. 加载 chapters、volumes、currentSurface、currentChapterId。
+4. 扫描 raw/compiled/canon/manuscript/outputs/exports。
+5. 打开或创建 `.lime/runtime/project.db`。
+6. 恢复最近 task、feed、diagnostics。
+
+## 任务启动
+
+任务输入 SHOULD 包含：surface、intent、chapterId、featureTool、targetRefs、writePolicy。
+
+客户端根据 surface 选择默认代理：writing -> chapter，knowledge -> knowledge，analysis -> analysis，canon -> canon，revision -> revision，publish -> publish。
+
+## 上下文装配
+
+上下文应按顺序选择：
+
+1. 用户显式目标。
+2. 当前章节和场景目标。
+3. 相关 canon 和 compiled memory。
+4. 未解决 issue。
+5. 最近 feed 和 proposal 状态。
+6. raw/reference/knowledge source。
+7. 导出和发布状态。
+
+## 回写
+
+写入必须走 use case / repository / controlled tool：
+
+- 保存章节。
+- 保存 proposal。
+- 应用 proposal。
+- 拒绝 proposal。
+- 写入 canon candidate。
+- 更新 revision issue。
+- 创建 export package。
+
+UI 不允许直接写文件，也不允许从聊天文本推断写入。
+
+## 诊断
+
+客户端 SHOULD 提供 task diagnostics 查看入口，包括 trace、tool events、token usage、failure 和 updatedAt。
+
+
+<!-- Source: docs/zh/surfaces/home.md -->
+---
+title: 首页工作面
+description: 恢复现场、项目健康度和项目总控代理。
+---
+
+# 首页工作面
+
+首页不是功能广告页，而是作者回到作品的恢复现场。
+
+## 左侧作品对象
+
+- 最近项目和当前项目。
+- 当前章节入口。
+- 最近后台结果。
+- 项目健康度。
+- 快捷动作。
+
+## 右侧代理
+
+项目总控代理负责：
+
+- 总结当前项目状态。
+- 推荐下一步。
+- 汇总设定、修订、发布后台结果。
+- 在风险升高时提示作者。
+
+## 标准卡片
+
+- 恢复写作。
+- 最近后台结果。
+- 项目健康度。
+- 下一步建议。
+- 风险摘要。
+
+
+
+<!-- Source: docs/zh/surfaces/writing.md -->
+---
+title: 写作工作面
+description: 章节树、场景列表、Tiptap 正文编辑和章节代理。
+---
+
+# 写作工作面
+
+写作工作面是 Agent Novel 的主战场。正文编辑器在中央，Agent 侧栏只辅助，不抢焦点。
+
+## 结构列
+
+- 章节树。
+- 场景列表。
+- 当前章节目标。
+- 本章状态。
+
+## 主工作面
+
+- 正文编辑器。
+- 选区操作。
+- 行内提议。
+- 提议接受/拒绝。
+- 差异对照。
 
 ## 章节代理
 
-职责：
+章节代理可以：
 
-- 续写当前章节。
-- 根据提纲补场景。
-- 改写局部段落。
-- 保持当前章节与设定、时间线、人物关系一致。
+- 基于当前章节目标续写。
+- 改写选区。
+- 补强场景目标。
+- 根据 canon 和 compiled memory 控制连续性。
+- 保存 proposal，不直接覆盖正文。
 
-输出 SHOULD 是 `writing proposal` 或 `chapter diff`。除非策略明确允许，章节代理 MUST NOT 直接覆盖 `manuscript/chapters/`。
+## 编辑器协议
+
+Tiptap 或其他编辑器只是 UI 状态源；保存后才通过应用层回写章节文件。右栏消息变化不应导致编辑器实例重建。
+
+
+
+<!-- Source: docs/zh/surfaces/knowledge.md -->
+---
+title: 知识工作面
+description: 知识页、证据、问答产物和知识代理。
+---
+
+# 知识工作面
+
+知识工作面承接小说长期记忆，不是通用第二大脑。
+
+## 能力
+
+- 导入 `.txt` / `.md` / `.markdown`。
+- 展示 raw、compiled、canon、outputs。
+- 针对项目问题生成 brief/report。
+- 写入 `outputs/answers/`。
+- 把稳定事实推荐回 canon。
+
+## 健康度
+
+知识工作面 SHOULD 展示：
+
+- 知识资产数量。
+- 最近输出。
+- 当前范围。
+- 过期、冲突、未来源化问题。
+
+## 问答原则
+
+回答必须区分已知、推断和未知。资料缺失时应说明缺口，不编造。
+
+
+
+<!-- Source: docs/zh/surfaces/analysis.md -->
+---
+title: 拆书工作面
+description: 写前拆书建模、样本指标和拆书代理。
+---
+
+# 拆书工作面
+
+拆书工作面用于写前建模，不用于复制样本文本。
+
+## 核心指标
+
+- hookStrength：开头钩子。
+- characterHeat：人物吸引力。
+- pacingMomentum：节奏动能。
+- feedbackResonance：读者反馈共振。
+
+## 输出
+
+- 爆点拆解。
+- 人物吸引力观察。
+- 节奏结构观察。
+- 读者反馈。
+- 风险提醒。
+- 对本项目的启发。
+
+拆书结果进入 analysis artifact、compiled report 或 outputs，不直接成为正文。
+
+
+
+<!-- Source: docs/zh/surfaces/canon.md -->
+---
+title: 设定工作面
+description: 候选设定卡、关系图、时间线和设定代理。
+---
+
+# 设定工作面
+
+设定工作面是项目长期一致性的前台，不是后台管理页。
+
+## 视图
+
+- 卡片视图。
+- 关系图。
+- 时间线。
+
+## 卡片状态
+
+- candidate：候选事实。
+- confirmed：已确认事实。
+- archived：废弃或历史事实。
 
 ## 设定代理
 
-职责：
+设定代理负责提取候选、发现冲突、同步人物状态、生成时间线事件。候选不能自动升级为 confirmed，除非策略允许或作者确认。
 
-- 从正文和参考中提取候选设定。
-- 合并重复角色、地点、组织和规则。
-- 检查设定冲突和过期信息。
-- 维护 story bible 的 reviewed 状态。
 
-输出 SHOULD 是 `canon candidate`、`canon update proposal` 或 `canon conflict`。候选设定必须经过确认才能成为 canonical card。
 
-## 知识代理
+<!-- Source: docs/zh/surfaces/revision.md -->
+---
+title: 修订工作面
+description: 问题队列、证据、差异和修订代理。
+---
 
-职责：
+# 修订工作面
 
-- 导入 `.txt`、`.md`、`.markdown` 等参考资料。
-- 回答面向项目的资料问题。
-- 为回答提供来源路径和片段。
-- 将稳定知识推荐进入 Agent Knowledge pack 或 `references/` 派生文档。
+修订工作面把问题变成可处理队列。
 
-输出 SHOULD 区分事实、推断和未知。缺少来源时应明确标记。
+## 问题队列
 
-## 拆书代理
+每个 issue 至少包含：标题、摘要、章节、severity、status 和证据。
 
-职责：
+## 修订动作
 
-- 分析样本的结构、节奏、风格和章节钩子。
-- 提炼可复用观察，但不照搬原文。
-- 把分析结果关联到 `references/` 或知识包。
-
-输出 SHOULD 是 analysis artifact、style note 或结构观察，不直接写入正文。
+- 延后。
+- 标记解决。
+- 生成最小改写 proposal。
+- 应用或拒绝 proposal。
+- 撤销 applied record。
 
 ## 修订代理
 
-职责：
-
-- 检查连续性、剧情、语言和风格问题。
-- 生成 issue 和可应用 proposal。
-- 提供证据和差异预览。
-- 在应用后更新 issue 状态。
-
-修订代理 SHOULD 优先创建小粒度 proposal，避免一个提议横跨大量章节。
-
-## 发布代理
-
-职责：
-
-- 检查缺章、标题、目录、未解决 issue 和导出格式。
-- 生成 Markdown、EPUB 或其他发布包。
-- 记录 export manifest 和预检结果。
-
-发布代理 MAY 自动生成本地导出文件，但外部发布 MUST 经过审批和策略检查。
-
-## 工具编排
-
-工具执行 SHOULD 遵循：
-
-1. 只读工具可并发。
-2. 写工具串行。
-3. 自动写入仅限低风险派生资产。
-4. 正文、设定、发布和外部动作默认需要用户确认。
-5. 每个工具结果都应能关联到 task、target 和 evidence。
+修订代理不应输出泛泛批评，而应输出带目标、证据、严重度和建议动作的问题。
 
 
-<!-- Source: docs/zh/contracts/runtime-events.md -->
+
+<!-- Source: docs/zh/surfaces/publish.md -->
 ---
-title: 运行时事件契约
-description: Agent Novel 推荐的小说语义事件族。
+title: 发布工作面
+description: 导出预设、发布草案、manifest 和发布代理。
 ---
 
-# 运行时事件契约
+# 发布工作面
 
-Agent Novel 不定义完整事件总线，但建议兼容 Agent Runtime 的实现使用稳定事件族表达小说语义。
+发布工作面负责把作品资产转成可交付产物。
 
-## 基本 envelope
+## 能力
 
-```json
-{
-  "eventId": "evt_01",
-  "type": "novel.proposal.created",
-  "taskId": "task_01",
-  "projectId": "novel_01",
-  "timestamp": "2026-05-15T12:00:00Z",
-  "payload": {}
-}
-```
+- Markdown 导出。
+- EPUB 导出。
+- 平台简介草案。
+- 发布备注草案。
+- 版本比较。
+- 资产检查。
+- 最终确认。
 
-## 推荐事件族
+## 导出结果
 
-| 事件 | 负载重点 |
-| --- | --- |
-| `novel.context.selected` | selected refs、omitted refs、budget、missing context。 |
-| `novel.context.missing` | 缺失类型、目标、影响和建议动作。 |
-| `novel.proposal.created` | proposal id、目标、风险、摘要。 |
-| `novel.evidence.linked` | evidence ref、claim、target。 |
-| `novel.approval.required` | action id、操作类型、风险、可选动作。 |
-| `novel.asset.updated` | 路径、资产类型、来源 proposal、应用人。 |
-| `novel.export.created` | export id、格式、artifact refs、检查结果。 |
-| `novel.issue.detected` | issue id、类型、严重度、位置。 |
+每次导出生成目录和 `manifest.json`，记录 preset、version、synopsis、splitChapters、notes、feedback 和 files。
 
-## 事件与文件事实的关系
+## 审批
 
-事件记录“发生过什么”，文件记录“当前事实是什么”。事件可以解释文件变化，但不能替代 `manuscript/`、`canon/`、`revisions/` 和 `exports/`。
+最终导出需要作者确认。外部发布或同步必须走更严格策略。
 
-## 大结果
-
-大段正文、完整差异或导出文件 SHOULD 存为 artifact 或项目文件，并在事件中使用 ref，而不是把大结果直接塞进事件 payload。
-
-
-<!-- Source: docs/zh/contracts/review-and-approval.md -->
----
-title: 评审与审批
-description: Agent Novel 的提议、证据、差异和人工确认协议。
----
-
-# 评审与审批
-
-Agent Novel 的默认安全模型是“提议先行，显式应用”。AI 可以快速生成候选结果，但成为作品事实前必须通过策略或作者动作。
-
-## 结果类型
-
-| 类型 | 是否作品事实 | 说明 |
-| --- | --- | --- |
-| `message` | 否 | 解释、进度、回答。 |
-| `evidence` | 否 | 支撑判断的来源片段或引用。 |
-| `proposal` | 否 | 可审查、可应用的变更建议。 |
-| `issue` | 是 | 修订问题本身是项目维护事实。 |
-| `canon candidate` | 否 | 候选设定，不是 canonical fact。 |
-| `applied record` | 是 | 记录已应用的变更。 |
-| `export artifact` | 是 | 已生成的发布产物和 manifest。 |
-
-## Proposal 要求
-
-每个 proposal SHOULD 包含：
-
-| 字段 | 说明 |
-| --- | --- |
-| `proposalId` | 稳定 ID。 |
-| `taskId` | 产生它的代理任务。 |
-| `targetRefs` | 目标章节、设定、问题或导出路径。 |
-| `summary` | 变更摘要。 |
-| `riskLevel` | `low`、`medium`、`high`。 |
-| `diff` | 可读差异或替换范围。 |
-| `evidenceRefs` | 证据引用。 |
-| `status` | `draft`、`ready`、`accepted`、`rejected`、`applied`。 |
-
-## 审批触发
-
-以下操作 SHOULD 触发审批：
-
-- 覆盖或大幅修改已接受正文。
-- 将候选设定升级为 canonical card。
-- 删除、合并或重命名设定卡。
-- 批量应用多个修订提议。
-- 生成面向外部发布的最终包。
-- 调用外部发布、同步、发送或生产环境 API。
-
-## 审批 UI 最小信息
-
-审批请求至少应展示：
-
-1. 操作类型。
-2. 影响路径或资产 ID。
-3. 风险等级。
-4. 差异摘要。
-5. 证据或来源。
-6. 可撤销性说明。
-7. 明确的确认、拒绝或延后动作。
-
-## 应用记录
-
-成功应用 proposal 后，系统 SHOULD 写入 applied record：
-
-```json
-{
-  "appliedId": "applied_01",
-  "proposalId": "proposal_01",
-  "taskId": "task_01",
-  "targets": ["manuscript/chapters/chapter_001-opening.md"],
-  "summary": "替换第二场景结尾并补齐角色动机。",
-  "appliedBy": "user",
-  "appliedAt": "2026-05-15T12:00:00Z"
-}
-```
-
-## 失败和撤销
-
-写入失败时，Runtime MUST 保留失败原因、已尝试路径和未完成状态。支持撤销的实现 SHOULD 保存写入前摘要或快照引用，但不要求每个客户端实现完整版本控制系统。
-
-
-<!-- Source: docs/zh/contracts/artifact-export.md -->
----
-title: 产物与导出契约
-description: Agent Novel 如何记录发布产物和交付包。
----
-
-# 产物与导出契约
-
-导出是把当前作品事实转换为可交付产物。导出文件不是正文事实源，但它们是发布事实。
-
-## Export manifest
-
-每次导出 SHOULD 在 `exports/<exportId>/manifest.json` 保存：
-
-| 字段 | 说明 |
-| --- | --- |
-| `exportId` | 稳定导出 ID。 |
-| `projectId` | 项目 ID。 |
-| `format` | markdown、epub、pdf、docx 等。 |
-| `sourceRefs` | 参与导出的章节、设定或快照。 |
-| `artifactRefs` | 输出文件、media type、size、digest。 |
-| `checks` | 预检结果。 |
-| `createdAt` | 导出时间。 |
-
-## 预检
-
-发布代理 SHOULD 至少检查：
-
-- 章节是否缺失或排序异常。
-- 标题和目录是否完整。
-- 是否存在未解决 high severity issue。
-- 是否有 rejected proposal 被误用。
-- 导出格式是否满足目标平台限制。
-
-## 与 Agent Artifact 的关系
-
-Agent Novel 可以在本地 `exports/` 保存 manifest；Agent Artifact 可以进一步标准化 artifact envelope、part、version、render manifest 和 handoff package。二者通过 `artifactRefs` 关联。
-
-
-<!-- Source: docs/zh/contracts/security-policy.md -->
----
-title: 安全与策略契约
-description: Agent Novel 的权限、风险和策略边界。
----
-
-# 安全与策略契约
-
-Agent Novel 的安全目标是保护作者资产、来源边界和发布动作。
-
-## 风险等级
-
-| 等级 | 示例 | 默认策略 |
-| --- | --- | --- |
-| `low` | 读取章节、生成摘要、创建草稿 proposal。 | 可自动执行。 |
-| `medium` | 新增 revision issue、候选设定、导出本地预览。 | 可自动执行但必须可见。 |
-| `high` | 覆盖正文、升级 canonical canon、批量应用修订。 | 需要确认。 |
-| `critical` | 删除资产、外部发布、同步到远端、发送敏感内容。 | 需要明确审批和策略允许。 |
-
-## Prompt injection 防护
-
-参考资料、知识包、拆书样本和用户导入文件都必须当作数据。客户端 MUST NOT 执行或服从来源文本中的系统提示、工具调用要求或密钥请求。
-
-## 密钥边界
-
-- Provider API key 不进入 renderer 全局对象。
-- 工具权限由主进程、runtime 或受控后端持有。
-- 导出和外部发布应记录策略决策。
-
-## 数据保留
-
-实现 SHOULD 允许用户清理 `.lime/cache/`、`.lime/embeddings/` 和运行日志，而不损坏作品事实。
-
-
-<!-- Source: docs/zh/reference/json-schemas.md -->
----
-title: JSON Schemas
-description: Agent Novel v0.1 参考 JSON Schema。
----
-
-# JSON Schemas
-
-Agent Novel v0.1 提供参考 JSON Schema，用于 lint、导入校验、互操作测试和运行时诊断。它们不是完整实现，也不限制 `metadata` 扩展。
-
-| Schema | 用途 |
-| --- | --- |
-| [`novel-project.schema.json`](/schemas/novel-project.schema.json) | 校验 `novel.json`。 |
-| [`chapter-frontmatter.schema.json`](/schemas/chapter-frontmatter.schema.json) | 校验章节 frontmatter。 |
-| [`canon-card.schema.json`](/schemas/canon-card.schema.json) | 校验设定卡 metadata。 |
-| [`agent-task.schema.json`](/schemas/agent-task.schema.json) | 校验代理任务输入。 |
-| [`revision-issue.schema.json`](/schemas/revision-issue.schema.json) | 校验修订问题。 |
-| [`proposal.schema.json`](/schemas/proposal.schema.json) | 校验可回写提议。 |
-| [`export-manifest.schema.json`](/schemas/export-manifest.schema.json) | 校验导出清单。 |
-| [`runtime-event.schema.json`](/schemas/runtime-event.schema.json) | 校验 Novel 语义事件 envelope。 |
-
-## 使用建议
-
-- 导入项目时先校验 `novel.json`。
-- 保存 proposal、issue、export manifest 前进行 schema 校验。
-- Runtime 事件可按 `runtime-event.schema.json` 做最小 envelope 校验。
-- 对私有扩展使用 `metadata.<namespace>`，避免污染标准字段。
-
-
-<!-- Source: docs/zh/reference/glossary.md -->
----
-title: 术语表
-description: Agent Novel v0.1 核心术语。
----
-
-# 术语表
-
-| 术语 | 含义 |
-| --- | --- |
-| Project package | 一个可迁移的小说项目目录。 |
-| Manuscript | 作者已接受的正文事实源。 |
-| Canon | 维护后的 story bible。 |
-| Reference | 参考来源，不自动成为作品事实。 |
-| Proposal | AI 或工具生成的可审查变更建议。 |
-| Revision issue | 已记录的修订问题。 |
-| Applied record | proposal 被应用后的审计记录。 |
-| Evidence ref | 支撑 claim、issue 或 proposal 的来源引用。 |
-| Context assembly | 为模型调用选择、压缩和注入上下文的过程。 |
-| Runtime event | 执行事实，不等于作品事实。 |
-
-
-<!-- Source: docs/zh/examples/complete-project.md -->
----
-title: 完整项目示例
-description: 一个最小但完整的 Agent Novel 项目包示例。
----
-
-# 完整项目示例
-
-```text
-mist-harbor/
-├── novel.json
-├── manuscript/
-│   └── chapters/
-│       └── chapter_001-opening.md
-├── canon/
-│   └── characters/
-│       └── character_lina.md
-├── references/
-│   └── research/
-│       └── harbor-history.md
-├── revisions/
-│   ├── issues/
-│   │   └── issue_001_timeline.md
-│   ├── proposals/
-│   │   └── proposal_001_fix-opening.md
-│   └── applied/
-├── exports/
-└── .lime/
-    └── runtime/
-```
-
-## `novel.json`
-
-```json
-{
-  "schemaVersion": "0.1.0",
-  "projectId": "mist_harbor",
-  "title": "雾港年代记",
-  "language": "zh-CN",
-  "status": "active",
-  "currentChapterId": "chapter_001",
-  "manuscript": {
-    "chaptersDir": "manuscript/chapters",
-    "snapshotDir": "manuscript/snapshots"
-  },
-  "canon": {
-    "rootDir": "canon",
-    "cardFormat": "markdown-frontmatter"
-  }
-}
-```
-
-## 提议流程
-
-1. 章节代理读取当前章节和 `character_lina`。
-2. 修订代理发现时间线冲突，写入 `revisions/issues/issue_001_timeline.md`。
-3. 章节代理生成 `proposal_001_fix-opening.md`。
-4. UI 展示差异和证据。
-5. 作者确认后，客户端更新章节并写入 applied record。
-
-这个流程保证 AI 输出不会在未经确认时成为正文事实。
 
 
 <!-- Source: docs/zh/reference/lime-novel-source-analysis.md -->
 ---
 title: Lime Novel 来源分析
-description: 从 lime-novel 当前项目抽象 Agent Novel v0.1 的事实来源。
+description: Agent Novel v0.1.1 从 lime-novel 真实文档和实现中抽象出的标准事实。
 ---
 
 # Lime Novel 来源分析
 
-本页记录 Agent Novel v0.1 的主要来源。它不是 `lime-novel` 的实现文档，而是说明哪些当前事实被提升为标准语义。
+v0.1.1 重写时不再只参考目录，而是读取了 `lime-novel` 的 PRD、技术文档、DTO、domain model、runtime tools、renderer surfaces 和 runtime smoke。
 
-## 产品事实来源
+## 产品文档事实
 
-`lime-novel/docs/prd/lime-novel-electron-product-design.md` 提供了核心产品判断：
+`docs/prd/lime-novel-electron-product-design.md` 提供：
 
-- Lime Novel 是独立的 AI Agent 小说桌面工作台，不是聊天侧栏。
-- 核心原则是项目优先、正文优先、连续性优先、结果可回写、低打扰优先。
-- 代理层包含项目总控、章节、设定、修订、发布、研究等角色。
-- 技能不是提示词，而是受控能力单元。
+- 目标不是帮写一段，而是陪作者持续写完、修完、发出去。
+- 代理不是聊天侧栏，而是项目总控、章节、设定、修订、发布、研究的中台。
+- 技能是受控能力单元，不是提示词。
 - 子代理可以分叉，但不能污染主写作上下文。
-- 长篇项目必须有记忆提炼和上下文压缩。
+- 长篇项目需要工作记忆、章节记忆、项目记忆。
+- 能力按场景动态激活。
+- 工具编排、任务面板、权限边界是一等能力。
 
-`lime-novel/docs/prd/lime-novel-ui-design.md` 提供了 UI 投影判断：
+`docs/prd/lime-novel-knowledge-base-design.md` 提供：
 
-- 左侧小说工作面优先，右侧 AI 代理协作栏辅助。
-- 右栏分建议视图和对话视图。
-- 消息类型包括说明、证据、提议、任务和审批。
-- AI 结果默认先提议，再应用。
-- 证据必须可见，后台代理不能抢焦点。
+- 小说知识库是知识编译层，不是通用 wiki。
+- 核心目录：raw、compiled、canon、manuscript、outputs。
+- 工作流：导入素材、编译知识、项目问答、健康检查、回写项目。
+- 知识页字段：id、type、title、status、sources、related、updatedAt。
 
-`lime-novel/docs/prd/lime-novel-knowledge-base-design.md` 提供了知识层判断：
+`docs/prd/lime-novel-ui-design.md` 提供：
 
-- 小说知识库不同于通用研究 wiki。
-- 导入素材、编译知识、针对项目提问、健康检查和回写项目应形成闭环。
-- 知识页、证据和回写需要在同一工作面协作。
+- UI 结构：左侧小说工作面 + 右侧 AI 代理协作栏。
+- 右栏双态：建议和对话共享任务、证据、提议、审批状态。
+- 工作面：首页、写作、设定、修订、发布。
+- 结果类型：任务卡、证据卡、提议块、差异卡、审批条、风险卡。
 
-## 技术事实来源
+## 技术文档事实
 
-`lime-novel/docs/tech/architecture-overview.md` 提供六层架构：用户交互层、应用编排层、小说领域层、代理运行时层、基础设施层和桌面平台层。
+`docs/tech/architecture-overview.md` 提供六层架构和双中枢：作品中枢与代理中枢。
 
-`lime-novel/docs/tech/module-boundaries.md` 提供模块边界：`apps/desktop`、`packages/shared-kernel`、`packages/domain-novel`、`packages/application`、`packages/agent-runtime`、`packages/infrastructure`。
+`docs/tech/data-model.md` 提供 Series、Project、Volume、Chapter、Scene、CanonCard、RevisionIssue、RevisionProposal、ApprovalRequest 和 SQLite 表建议。
 
-`lime-novel/docs/tech/data-model.md` 提供项目目录判断：
+`docs/tech/agent-runtime.md` 提供当前已实现 runtime：provider、单代理 loop、工具调用、结构化结果、诊断持久化和未实现边界。
 
-```text
-my-novel/
-  novel.json
-  manuscript/
-  canon/
-  revisions/
-  exports/
-  references/
-  .lime/
-```
+`docs/tech/state-architecture.md` 提供三层状态：项目资源态、代理任务态、局部 UI 态，以及请求流/事件流分离。
 
-`lime-novel/docs/tech/agent-runtime.md` 提供当前 runtime 落地边界：
+`docs/tech/desktop-architecture.md` 提供 Electron Main、Preload、Renderer、Background Workers 的安全边界。
 
-- `anthropic` 和 `openai-compatible` provider。
-- 单代理 session loop。
-- 工具调用编排。
-- `submit_task_result` 结构化收尾。
-- 与 Electron IPC、TaskEventDto、AgentFeed 协议兼容。
-- 无模型配置时回退到 legacy 规则型 runtime。
-- 当前未实现多代理、MCP、远端 worktree、插件市场和长期记忆压缩。
+## 代码事实
 
-## 已提升为 Agent Novel v0.1 的标准语义
+`packages/domain-novel/src/index.ts` 提供标准 surface、agent type、task status、risk level 和领域类型。
 
-| Lime Novel 事实 | Agent Novel 抽象 |
-| --- | --- |
-| `novel.json` + 项目目录 | 项目包入口和文件事实源协议。 |
-| `manuscript/` | 正文权威层。 |
-| `canon/` | story bible 和设定事实层。 |
-| `references/` | 来源和知识候选层。 |
-| `revisions/` | issue、proposal、applied record 闭环。 |
-| `exports/` | 发布产物和 manifest 层。 |
-| `.lime/` | 运行支撑、缓存、索引、日志层。 |
-| AgentFeed 右栏 | Agent UI 投影，不是事实源。 |
-| live agent tools | Runtime 读写工具分层。 |
-| proposal / canon candidate / revision issue | 可回写结果模型。 |
+`packages/application/src/dto/index.ts` 提供 UI/IPC DTO：AgentFeedItem、AgentTask、Diagnostics、KnowledgeDocument、AnalysisSample、ExportHistory 等。
 
-## 暂未提升为必需标准
+`packages/agent-runtime/src/live-agent-prompts.ts` 提供各 surface 的真实提示约束。
 
-以下能力被记录为 future work，不进入 v0.1 必需协议：
+`packages/agent-runtime/src/live-agent-workspace-tools.ts`、`live-agent-persistence-tools.ts`、`live-agent-result-tool.ts` 提供真实工具集合。
 
-- 多代理协同。
-- MCP 工具接入。
-- 远端执行和 worktree。
-- 动态插件发现与隔离运行。
-- 长时记忆压缩与恢复。
-- 云同步和多用户权限。
+`apps/desktop/src/renderer/src/features/*` 提供工作面实现：写作、知识、拆书、设定、修订、发布、AgentSidebar。
+
+`scripts/runtime-smoke.mjs` 证明项目、章节保存、写作 proposal、设定候选、修订问题、知识问答、知识导入、Markdown/EPUB 导出和诊断持久化已经形成闭环。
+
+## v0.1.1 提升结果
+
+本标准将上述事实提升为：
+
+- 工作面标准。
+- 项目包标准。
+- 知识编译标准。
+- 章节/场景/记忆标准。
+- 运行时工具标准。
+- Agent Feed 投影标准。
+- 诊断标准。
+- 发布导出标准。
 
 
-<!-- Source: docs/en/specification.md -->
+<!-- Source: docs/zh/reference/json-schemas.md -->
 ---
-title: Specification
-description: Agent Novel v0.1 draft specification.
+title: JSON Schemas
+description: Agent Novel v0.1.1 参考 JSON Schema。
 ---
 
-# Specification
+# JSON Schemas
 
-Agent Novel v0.1 defines a draft standard for agent-native long-form fiction workspaces. It describes durable novel project files, writing-agent task boundaries, proposals, evidence, approvals, exports and runtime semantics without replacing Agent Skills, Agent Knowledge, Agent Runtime or Agent UI.
+Agent Novel v0.1.1 的 schema 用于 lint、导入校验、运行时诊断和互操作测试。schema 是参考契约，不禁止 `metadata` 或实现方扩展。
 
-## Boundary
-
-| System | Owns |
+| Schema | 用途 |
 | --- | --- |
-| Agent Skills | Executable workflows, scripts and tool procedures. |
-| Agent Knowledge | Source-grounded facts and safe runtime context. |
-| Agent Novel | Novel project assets, writing workspace semantics and writeback boundaries. |
-| Agent Runtime | Sessions, tasks, turns, tools, approvals, queues and events. |
-| Agent UI | Projection of runtime and novel facts into visible controls. |
+| [`agent-feed-item.schema.json`](/schemas/agent-feed-item.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`agent-task.schema.json`](/schemas/agent-task.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`analysis-sample.schema.json`](/schemas/analysis-sample.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`canon-card.schema.json`](/schemas/canon-card.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`chapter-frontmatter.schema.json`](/schemas/chapter-frontmatter.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`export-manifest.schema.json`](/schemas/export-manifest.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`knowledge-document.schema.json`](/schemas/knowledge-document.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`novel-project.schema.json`](/schemas/novel-project.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`proposal.schema.json`](/schemas/proposal.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`revision-issue.schema.json`](/schemas/revision-issue.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`revision-record.schema.json`](/schemas/revision-record.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`runtime-event.schema.json`](/schemas/runtime-event.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`submitted-task-result.schema.json`](/schemas/submitted-task-result.schema.json) | Agent Novel v0.1.1 参考 schema。 |
+| [`workspace-shell.schema.json`](/schemas/workspace-shell.schema.json) | Agent Novel v0.1.1 参考 schema。 |
 
-## Conformance levels
+## 使用建议
 
-- `reader`: discover `novel.json` and read project assets.
-- `workspace`: provide project workbench surfaces for manuscript, canon, revisions and exports.
-- `agent-ready`: support tasks, context assembly, proposals, evidence, approvals and controlled writes.
-- `full`: support schemas, runtime events, audit records, export manifests and adjacent standard interop.
-
-## Project package
-
-```text
-my-novel/
-├── novel.json
-├── manuscript/
-│   ├── chapters/
-│   └── snapshots/
-├── canon/
-├── references/
-├── revisions/
-├── exports/
-└── .lime/
-    ├── runtime/
-    ├── embeddings/
-    ├── cache/
-    └── logs/
-```
-
-Rules:
-
-1. `manuscript/` and `canon/` are project fact sources.
-2. `references/` is source material, not accepted story canon.
-3. `revisions/` stores issues, proposals, diffs and applied records.
-4. `exports/` stores publishable outputs and manifests.
-5. `.lime/` stores runtime support data and must not become story authority.
-
-## Required `novel.json` fields
-
-| Field | Meaning |
-| --- | --- |
-| `schemaVersion` | Agent Novel schema version. |
-| `projectId` | Stable project id. |
-| `title` | Work title. |
-| `language` | Primary language. |
-| `manuscript` | Manuscript directory config. |
-| `canon` | Story bible directory config. |
-
-## Agent roles
-
-- Project coordinator: restore state, summarize risks and route tasks.
-- Chapter agent: create writing proposals and chapter diffs.
-- Canon agent: extract candidates and check conflicts.
-- Knowledge agent: import and answer from references.
-- Analysis agent: study samples and produce analysis artifacts.
-- Revision agent: create issues and repair proposals.
-- Publish agent: run export checks and produce export manifests.
-
-## Runtime semantics
-
-Implementations should record context selection, missing context, proposals, evidence, approvals, asset updates and exports as structured events. Events explain execution; project files remain the durable story facts.
-
-## Safety defaults
-
-AI output should become a proposal before it becomes project fact. Accepted manuscript, canonical story bible facts, batch revision application and external publishing should require explicit policy or user approval.
-
-## Schemas
-
-Reference schemas live under `/schemas/` for project entries, chapter metadata, canon cards, agent tasks, revision issues, proposals, export manifests and runtime events.
+- 导入项目时先校验 `novel-project.schema.json`。
+- 启动 Agent 任务前校验 task 和 workspace shell。
+- 保存 proposal、issue、feed item、export manifest 前做最小 schema 校验。
+- Runtime 诊断和 feed 投影应优先对齐 DTO，而不是解析自然语言。

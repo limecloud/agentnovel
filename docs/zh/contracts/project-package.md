@@ -1,70 +1,79 @@
 ---
 title: 项目包协议
-description: Agent Novel 项目目录和文件事实源协议。
+description: Agent Novel 项目目录、novel.json 和知识编译目录协议。
 ---
 
 # 项目包协议
 
-项目包是 Agent Novel 的核心资产单位。它应该能被桌面应用打开，被 Agent Runtime 读取，被备份工具复制，也能被作者用普通编辑器检查。
+Agent Novel 项目包必须同时服务作者、桌面应用、Agent Runtime、搜索索引和导出器。核心目标是：作品资产可见、可迁移，运行支撑可重建，代理结果可审计。
 
-## 目录职责
+## 目录 profile
 
-| 路径 | 权威性 | 说明 |
-| --- | --- | --- |
-| `novel.json` | 必需入口 | 项目身份、语言、状态、目录和策略引用。 |
-| `manuscript/chapters/` | 正文权威 | 已接受章节 Markdown。 |
-| `manuscript/snapshots/` | 历史参考 | 手动或自动生成的正文快照。 |
-| `canon/` | 设定权威 | story bible 卡片。 |
-| `references/` | 参考来源 | 导入素材、研究文档、拆书样本。 |
-| `revisions/` | 修订事实 | issue、proposal、applied record。 |
-| `exports/` | 发布事实 | 导出产物和 manifest。 |
-| `.lime/` | 运行支撑 | 索引、缓存、embedding、日志、任务诊断。 |
-
-## 文件命名
-
-实现 SHOULD 使用稳定 ID 与可读 slug 组合，例如：
+### 基础作品 profile
 
 ```text
-manuscript/chapters/chapter_001-opening.md
-canon/characters/character_lina.md
-revisions/issues/issue_20260515_continuity.md
-exports/export_20260515_epub/manifest.json
+novel.json
+manuscript/chapters/
+canon/
+references/
+revisions/
+exports/
+.lime/
 ```
 
-文件名不是唯一身份；唯一身份应在 frontmatter 或 JSON 字段中保存。
+### 知识编译 profile
 
-## Markdown frontmatter
+```text
+raw/
+compiled/
+canon/
+manuscript/
+outputs/
+```
 
-正文、设定和修订提议可以使用 Markdown frontmatter。推荐字段：
+推荐实现同时支持二者：`references/` 可作为通用入口，`raw/compiled/outputs` 作为小说知识库的规范化子层。
 
-| 字段 | 适用 | 说明 |
-| --- | --- | --- |
-| `id` | all | 稳定 ID。 |
-| `type` | canon / revision | `character`、`rule`、`proposal` 等。 |
-| `status` | all | `draft`、`ready`、`candidate`、`applied` 等。 |
-| `sourceRefs` | canon / revision | 证据或来源引用。 |
-| `updated` | all | 最近事实更新时间。 |
-| `agentTaskId` | generated assets | 产生该资产的任务 ID。 |
+## `novel.json` 示例
 
-## `.lime/` 运行目录
+```json
+{
+  "schemaVersion": 1,
+  "projectId": "proj-lime-novel",
+  "title": "钟塔尽头的雨季",
+  "subtitle": "代理优先的长篇小说工作台",
+  "status": "drafting",
+  "language": "zh-CN",
+  "genre": "悬疑 / 都市奇幻",
+  "premise": "女主在父亲失踪后的旧钟楼里，逐步揭开一条被整座城市默许的时间裂缝。",
+  "currentSurface": "writing",
+  "currentChapterId": "chapter-12",
+  "volumes": [],
+  "chapters": [],
+  "homeHighlights": [],
+  "quickActions": []
+}
+```
 
-`.lime/` 不应污染作者主资产，但可以保存系统支撑数据：
+## 章节索引
 
-| 路径 | 内容 | 可重建 |
-| --- | --- | --- |
-| `.lime/runtime/` | task snapshots、diagnostics、settings refs。 | 部分可重建。 |
-| `.lime/embeddings/` | 向量数据和分块元数据。 | 是。 |
-| `.lime/cache/` | 搜索、编译、导出缓存。 | 是。 |
-| `.lime/logs/` | 本地诊断日志。 | 通常不可完全重建。 |
+章节条目不是重复正文，而是运行时和 UI 的索引：
 
-客户端 MUST NOT 把 `.lime/cache/` 或 `.lime/embeddings/` 当作作品事实权威。
+- `file` 指向正文。
+- `summary` 是章节已发生事实。
+- `objective` 是章节叙事目标。
+- `scenes` 提供场景级工作面结构。
+- `lastEditedAt` 支持恢复现场。
 
-## 迁移
+## `.lime` 目录
 
-项目迁移 SHOULD 遵循：
+`.lime/runtime/project.db` 可保存：
 
-1. 先备份 `novel.json`、`manuscript/`、`canon/`、`references/`、`revisions/`、`exports/`。
-2. 检查 `schemaVersion` 和目录字段。
-3. 只对受影响文件做最小迁移。
-4. 在 `revisions/` 或 `.lime/logs/` 记录迁移摘要。
-5. 重建索引和缓存，而不是复制不兼容运行数据。
+- agent tasks。
+- agent feed。
+- proposals。
+- revision issue state。
+- diagnostics。
+- evidence snippets。
+- memory snapshots。
+
+`.lime/cache`、`.lime/embeddings` 应可重建；`.lime/logs` 可清理但应避免泄露敏感信息。

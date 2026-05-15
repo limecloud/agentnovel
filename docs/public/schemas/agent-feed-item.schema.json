@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/agent-feed-item.schema.json",
+  "title": "Agent Feed Item",
+  "type": "object",
+  "required": [
+    "itemId",
+    "taskId",
+    "kind",
+    "title",
+    "body",
+    "createdAt"
+  ],
+  "properties": {
+    "itemId": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "status",
+        "evidence",
+        "proposal",
+        "issue",
+        "approval"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "supportingLabel": {
+      "type": "string"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "proposalId": {
+      "type": "string"
+    },
+    "approvalId": {
+      "type": "string"
+    },
+    "approvalStatus": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "rejected"
+      ]
+    },
+    "linkedIssueId": {
+      "type": "string"
+    },
+    "diffPreview": {
+      "type": "object",
+      "required": [
+        "before",
+        "after"
+      ],
+      "properties": {
+        "before": {
+          "type": "string"
+        },
+        "after": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "createdAt": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

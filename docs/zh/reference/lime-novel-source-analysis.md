@@ -1,88 +1,73 @@
 ---
 title: Lime Novel 来源分析
-description: 从 lime-novel 当前项目抽象 Agent Novel v0.1 的事实来源。
+description: Agent Novel v0.1.1 从 lime-novel 真实文档和实现中抽象出的标准事实。
 ---
 
 # Lime Novel 来源分析
 
-本页记录 Agent Novel v0.1 的主要来源。它不是 `lime-novel` 的实现文档，而是说明哪些当前事实被提升为标准语义。
+v0.1.1 重写时不再只参考目录，而是读取了 `lime-novel` 的 PRD、技术文档、DTO、domain model、runtime tools、renderer surfaces 和 runtime smoke。
 
-## 产品事实来源
+## 产品文档事实
 
-`lime-novel/docs/prd/lime-novel-electron-product-design.md` 提供了核心产品判断：
+`docs/prd/lime-novel-electron-product-design.md` 提供：
 
-- Lime Novel 是独立的 AI Agent 小说桌面工作台，不是聊天侧栏。
-- 核心原则是项目优先、正文优先、连续性优先、结果可回写、低打扰优先。
-- 代理层包含项目总控、章节、设定、修订、发布、研究等角色。
-- 技能不是提示词，而是受控能力单元。
+- 目标不是帮写一段，而是陪作者持续写完、修完、发出去。
+- 代理不是聊天侧栏，而是项目总控、章节、设定、修订、发布、研究的中台。
+- 技能是受控能力单元，不是提示词。
 - 子代理可以分叉，但不能污染主写作上下文。
-- 长篇项目必须有记忆提炼和上下文压缩。
+- 长篇项目需要工作记忆、章节记忆、项目记忆。
+- 能力按场景动态激活。
+- 工具编排、任务面板、权限边界是一等能力。
 
-`lime-novel/docs/prd/lime-novel-ui-design.md` 提供了 UI 投影判断：
+`docs/prd/lime-novel-knowledge-base-design.md` 提供：
 
-- 左侧小说工作面优先，右侧 AI 代理协作栏辅助。
-- 右栏分建议视图和对话视图。
-- 消息类型包括说明、证据、提议、任务和审批。
-- AI 结果默认先提议，再应用。
-- 证据必须可见，后台代理不能抢焦点。
+- 小说知识库是知识编译层，不是通用 wiki。
+- 核心目录：raw、compiled、canon、manuscript、outputs。
+- 工作流：导入素材、编译知识、项目问答、健康检查、回写项目。
+- 知识页字段：id、type、title、status、sources、related、updatedAt。
 
-`lime-novel/docs/prd/lime-novel-knowledge-base-design.md` 提供了知识层判断：
+`docs/prd/lime-novel-ui-design.md` 提供：
 
-- 小说知识库不同于通用研究 wiki。
-- 导入素材、编译知识、针对项目提问、健康检查和回写项目应形成闭环。
-- 知识页、证据和回写需要在同一工作面协作。
+- UI 结构：左侧小说工作面 + 右侧 AI 代理协作栏。
+- 右栏双态：建议和对话共享任务、证据、提议、审批状态。
+- 工作面：首页、写作、设定、修订、发布。
+- 结果类型：任务卡、证据卡、提议块、差异卡、审批条、风险卡。
 
-## 技术事实来源
+## 技术文档事实
 
-`lime-novel/docs/tech/architecture-overview.md` 提供六层架构：用户交互层、应用编排层、小说领域层、代理运行时层、基础设施层和桌面平台层。
+`docs/tech/architecture-overview.md` 提供六层架构和双中枢：作品中枢与代理中枢。
 
-`lime-novel/docs/tech/module-boundaries.md` 提供模块边界：`apps/desktop`、`packages/shared-kernel`、`packages/domain-novel`、`packages/application`、`packages/agent-runtime`、`packages/infrastructure`。
+`docs/tech/data-model.md` 提供 Series、Project、Volume、Chapter、Scene、CanonCard、RevisionIssue、RevisionProposal、ApprovalRequest 和 SQLite 表建议。
 
-`lime-novel/docs/tech/data-model.md` 提供项目目录判断：
+`docs/tech/agent-runtime.md` 提供当前已实现 runtime：provider、单代理 loop、工具调用、结构化结果、诊断持久化和未实现边界。
 
-```text
-my-novel/
-  novel.json
-  manuscript/
-  canon/
-  revisions/
-  exports/
-  references/
-  .lime/
-```
+`docs/tech/state-architecture.md` 提供三层状态：项目资源态、代理任务态、局部 UI 态，以及请求流/事件流分离。
 
-`lime-novel/docs/tech/agent-runtime.md` 提供当前 runtime 落地边界：
+`docs/tech/desktop-architecture.md` 提供 Electron Main、Preload、Renderer、Background Workers 的安全边界。
 
-- `anthropic` 和 `openai-compatible` provider。
-- 单代理 session loop。
-- 工具调用编排。
-- `submit_task_result` 结构化收尾。
-- 与 Electron IPC、TaskEventDto、AgentFeed 协议兼容。
-- 无模型配置时回退到 legacy 规则型 runtime。
-- 当前未实现多代理、MCP、远端 worktree、插件市场和长期记忆压缩。
+## 代码事实
 
-## 已提升为 Agent Novel v0.1 的标准语义
+`packages/domain-novel/src/index.ts` 提供标准 surface、agent type、task status、risk level 和领域类型。
 
-| Lime Novel 事实 | Agent Novel 抽象 |
-| --- | --- |
-| `novel.json` + 项目目录 | 项目包入口和文件事实源协议。 |
-| `manuscript/` | 正文权威层。 |
-| `canon/` | story bible 和设定事实层。 |
-| `references/` | 来源和知识候选层。 |
-| `revisions/` | issue、proposal、applied record 闭环。 |
-| `exports/` | 发布产物和 manifest 层。 |
-| `.lime/` | 运行支撑、缓存、索引、日志层。 |
-| AgentFeed 右栏 | Agent UI 投影，不是事实源。 |
-| live agent tools | Runtime 读写工具分层。 |
-| proposal / canon candidate / revision issue | 可回写结果模型。 |
+`packages/application/src/dto/index.ts` 提供 UI/IPC DTO：AgentFeedItem、AgentTask、Diagnostics、KnowledgeDocument、AnalysisSample、ExportHistory 等。
 
-## 暂未提升为必需标准
+`packages/agent-runtime/src/live-agent-prompts.ts` 提供各 surface 的真实提示约束。
 
-以下能力被记录为 future work，不进入 v0.1 必需协议：
+`packages/agent-runtime/src/live-agent-workspace-tools.ts`、`live-agent-persistence-tools.ts`、`live-agent-result-tool.ts` 提供真实工具集合。
 
-- 多代理协同。
-- MCP 工具接入。
-- 远端执行和 worktree。
-- 动态插件发现与隔离运行。
-- 长时记忆压缩与恢复。
-- 云同步和多用户权限。
+`apps/desktop/src/renderer/src/features/*` 提供工作面实现：写作、知识、拆书、设定、修订、发布、AgentSidebar。
+
+`scripts/runtime-smoke.mjs` 证明项目、章节保存、写作 proposal、设定候选、修订问题、知识问答、知识导入、Markdown/EPUB 导出和诊断持久化已经形成闭环。
+
+## v0.1.1 提升结果
+
+本标准将上述事实提升为：
+
+- 工作面标准。
+- 项目包标准。
+- 知识编译标准。
+- 章节/场景/记忆标准。
+- 运行时工具标准。
+- Agent Feed 投影标准。
+- 诊断标准。
+- 发布导出标准。

@@ -1,9 +1,9 @@
 {
   "name": "agentnovel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
-  "description": "Draft documentation standard for agent-native long-form fiction workspaces.",
+  "description": "Draft standard for agent-native long-form fiction writing workspaces.",
   "homepage": "https://limecloud.github.io/agentnovel/",
   "repository": {
     "type": "git",

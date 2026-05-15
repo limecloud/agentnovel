@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/workspace-shell.schema.json",
+  "title": "Agent Novel Workspace Shell",
+  "type": "object",
+  "required": [
+    "project",
+    "chapterTree",
+    "sceneList",
+    "agentFeed"
+  ],
+  "properties": {
+    "project": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "chapterTree": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "sceneList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "analysisSamples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "canonCandidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "revisionIssues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "exportPresets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "agentFeed": {
+      "type": "array",
+      "items": {
+        "$ref": "https://limecloud.github.io/agentnovel/schemas/agent-feed-item.schema.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

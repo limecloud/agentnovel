@@ -7,7 +7,8 @@ const zhSidebar = [
       { text: '概览', link: '/zh/' },
       { text: '什么是 Agent Novel', link: '/zh/what-is-agent-novel' },
       { text: '规范', link: '/zh/specification' },
-      { text: '作者快速开始', link: '/zh/authoring/quickstart' }
+      { text: '作者快速开始', link: '/zh/authoring/quickstart' },
+      { text: '长篇写作闭环', link: '/zh/authoring/long-form-writing-loop' }
     ]
   },
   {
@@ -23,15 +24,40 @@ const zhSidebar = [
     ]
   },
   {
-    text: '契约',
+    text: '核心契约',
     items: [
       { text: '项目包协议', link: '/zh/contracts/project-package' },
+      { text: '章节与场景模型', link: '/zh/contracts/chapter-scene-model' },
+      { text: '连续性与记忆', link: '/zh/contracts/continuity-memory' },
+      { text: '知识编译层', link: '/zh/contracts/knowledge-compilation' },
       { text: '上下文解析', link: '/zh/contracts/context-resolution' },
+      { text: '写作质量信号', link: '/zh/contracts/writing-quality-signals' }
+    ]
+  },
+  {
+    text: '代理与运行时',
+    items: [
       { text: '代理工作流', link: '/zh/contracts/agent-workflows' },
+      { text: 'Live Agent Runtime', link: '/zh/contracts/live-agent-runtime' },
+      { text: '运行时工具', link: '/zh/contracts/runtime-tools' },
+      { text: 'Agent Feed 投影', link: '/zh/contracts/agent-feed-projection' },
+      { text: '诊断与轨迹', link: '/zh/contracts/diagnostics-trace' },
       { text: '运行时事件', link: '/zh/contracts/runtime-events' },
       { text: '评审与审批', link: '/zh/contracts/review-and-approval' },
       { text: '产物与导出', link: '/zh/contracts/artifact-export' },
       { text: '安全与策略', link: '/zh/contracts/security-policy' }
+    ]
+  },
+  {
+    text: '工作面',
+    items: [
+      { text: '首页', link: '/zh/surfaces/home' },
+      { text: '写作', link: '/zh/surfaces/writing' },
+      { text: '知识', link: '/zh/surfaces/knowledge' },
+      { text: '拆书', link: '/zh/surfaces/analysis' },
+      { text: '设定', link: '/zh/surfaces/canon' },
+      { text: '修订', link: '/zh/surfaces/revision' },
+      { text: '发布', link: '/zh/surfaces/publish' }
     ]
   },
   {
@@ -52,9 +78,10 @@ const zhSidebar = [
   {
     text: '版本',
     items: [
-      { text: 'v0.1.0 概览', link: '/zh/versions/v0.1.0/overview' },
-      { text: 'v0.1.0 规范', link: '/zh/versions/v0.1.0/specification' },
-      { text: 'v0.1.0 变更记录', link: '/zh/versions/v0.1.0/changelog' }
+      { text: 'v0.1.1 概览', link: '/zh/versions/v0.1.1/overview' },
+      { text: 'v0.1.1 规范', link: '/zh/versions/v0.1.1/specification' },
+      { text: 'v0.1.1 变更记录', link: '/zh/versions/v0.1.1/changelog' },
+      { text: 'v0.1.0 概览', link: '/zh/versions/v0.1.0/overview' }
     ]
   }
 ]
@@ -66,44 +93,38 @@ const enSidebar = [
       { text: 'Overview', link: '/en/' },
       { text: 'What is Agent Novel?', link: '/en/what-is-agent-novel' },
       { text: 'Specification', link: '/en/specification' },
-      { text: 'Author quickstart', link: '/en/authoring/quickstart' }
-    ]
-  },
-  {
-    text: 'Client implementation',
-    items: [
-      { text: 'Runtime standard', link: '/en/client-implementation/runtime-standard' }
-    ]
-  },
-  {
-    text: 'Concepts',
-    items: [
-      { text: 'Novel workspace', link: '/en/concepts/novel-workspace' }
+      { text: 'Author quickstart', link: '/en/authoring/quickstart' },
+      { text: 'Long-form writing loop', link: '/en/authoring/long-form-writing-loop' }
     ]
   },
   {
     text: 'Contracts',
     items: [
       { text: 'Project package', link: '/en/contracts/project-package' },
-      { text: 'Context resolution', link: '/en/contracts/context-resolution' },
-      { text: 'Agent workflows', link: '/en/contracts/agent-workflows' },
-      { text: 'Runtime events', link: '/en/contracts/runtime-events' },
-      { text: 'Review and approval', link: '/en/contracts/review-and-approval' },
-      { text: 'Artifact and export', link: '/en/contracts/artifact-export' },
-      { text: 'Security and policy', link: '/en/contracts/security-policy' }
+      { text: 'Chapter and scene model', link: '/en/contracts/chapter-scene-model' },
+      { text: 'Continuity and memory', link: '/en/contracts/continuity-memory' },
+      { text: 'Knowledge compilation', link: '/en/contracts/knowledge-compilation' },
+      { text: 'Live Agent Runtime', link: '/en/contracts/live-agent-runtime' },
+      { text: 'Runtime tools', link: '/en/contracts/runtime-tools' },
+      { text: 'Agent Feed projection', link: '/en/contracts/agent-feed-projection' }
     ]
   },
   {
-    text: 'Examples',
+    text: 'Surfaces',
     items: [
-      { text: 'Complete project example', link: '/en/examples/complete-project' }
+      { text: 'Home', link: '/en/surfaces/home' },
+      { text: 'Writing', link: '/en/surfaces/writing' },
+      { text: 'Knowledge', link: '/en/surfaces/knowledge' },
+      { text: 'Analysis', link: '/en/surfaces/analysis' },
+      { text: 'Canon', link: '/en/surfaces/canon' },
+      { text: 'Revision', link: '/en/surfaces/revision' },
+      { text: 'Publish', link: '/en/surfaces/publish' }
     ]
   },
   {
     text: 'Reference',
     items: [
       { text: 'JSON Schemas', link: '/en/reference/json-schemas' },
-      { text: 'Glossary', link: '/en/reference/glossary' },
       { text: 'Lime Novel source analysis', link: '/en/reference/lime-novel-source-analysis' },
       { text: 'Agent standards ecosystem', link: '/en/reference/agent-ecosystem' }
     ]
@@ -111,16 +132,16 @@ const enSidebar = [
   {
     text: 'Versions',
     items: [
-      { text: 'v0.1.0 overview', link: '/en/versions/v0.1.0/overview' },
-      { text: 'v0.1.0 specification', link: '/en/versions/v0.1.0/specification' },
-      { text: 'v0.1.0 changelog', link: '/en/versions/v0.1.0/changelog' }
+      { text: 'v0.1.1 overview', link: '/en/versions/v0.1.1/overview' },
+      { text: 'v0.1.1 changelog', link: '/en/versions/v0.1.1/changelog' },
+      { text: 'v0.1.0 overview', link: '/en/versions/v0.1.0/overview' }
     ]
   }
 ]
 
 export default {
   title: 'Agent Novel',
-  description: 'A draft standard for agent-native long-form fiction workspaces.',
+  description: 'A draft standard for agent-native long-form fiction writing workspaces.',
   base,
   cleanUrls: true,
   lastUpdated: true,
@@ -129,14 +150,8 @@ export default {
       { text: '中文', link: '/zh/' },
       { text: 'English', link: '/en/' },
       { text: '规范', link: '/zh/specification' },
-      { text: 'Specification', link: '/en/specification' },
-      {
-        text: 'v0.1.0',
-        items: [
-          { text: '中文概览', link: '/zh/versions/v0.1.0/overview' },
-          { text: 'English overview', link: '/en/versions/v0.1.0/overview' }
-        ]
-      },
+      { text: '写作闭环', link: '/zh/authoring/long-form-writing-loop' },
+      { text: 'v0.1.1', link: '/zh/versions/v0.1.1/overview' },
       { text: 'GitHub', link: 'https://github.com/limecloud/agentnovel' }
     ],
     sidebar: {

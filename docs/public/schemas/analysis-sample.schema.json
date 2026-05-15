@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/analysis-sample.schema.json",
+  "title": "Analysis Sample",
+  "type": "object",
+  "required": [
+    "sampleId",
+    "title",
+    "sourceLabel",
+    "scores"
+  ],
+  "properties": {
+    "sampleId": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "sourceLabel": {
+      "type": "string"
+    },
+    "synopsis": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scores": {
+      "type": "object",
+      "properties": {
+        "hookStrength": {
+          "type": "number"
+        },
+        "characterHeat": {
+          "type": "number"
+        },
+        "pacingMomentum": {
+          "type": "number"
+        },
+        "feedbackResonance": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

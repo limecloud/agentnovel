@@ -8,96 +8,208 @@
     "projectId",
     "title",
     "language",
-    "manuscript",
-    "canon"
+    "currentChapterId",
+    "chapters"
   ],
   "properties": {
     "schemaVersion": {
-      "type": "string"
+      "type": [
+        "integer",
+        "string"
+      ]
     },
     "projectId": {
-      "type": "string",
-      "minLength": 1
-    },
-    "seriesId": {
       "type": "string"
     },
     "title": {
-      "type": "string",
-      "minLength": 1
+      "type": "string"
     },
-    "language": {
-      "type": "string",
-      "minLength": 2
-    },
-    "genre": {
-      "type": [
-        "string",
-        "array"
-      ],
-      "items": {
-        "type": "string"
-      }
+    "subtitle": {
+      "type": "string"
     },
     "status": {
-      "type": "string",
-      "enum": [
-        "draft",
-        "active",
-        "revision",
-        "publishing",
-        "archived"
-      ]
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "genre": {
+      "type": "string"
+    },
+    "premise": {
+      "type": "string"
+    },
+    "currentSurface": {
+      "type": "string"
+    },
+    "currentFeatureTool": {
+      "type": "string"
     },
     "currentChapterId": {
       "type": "string"
     },
-    "updated": {
-      "type": "string"
+    "publishState": {
+      "type": "object",
+      "additionalProperties": true
     },
-    "manuscript": {
+    "volumes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/volume"
+      }
+    },
+    "chapters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/chapter"
+      }
+    },
+    "homeHighlights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "detail"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "quickActions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "prompt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "$defs": {
+    "volume": {
       "type": "object",
       "required": [
-        "chaptersDir"
+        "volumeId",
+        "order",
+        "title"
       ],
       "properties": {
-        "chaptersDir": {
+        "volumeId": {
           "type": "string"
         },
-        "snapshotDir": {
+        "order": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
           "type": "string"
         }
       },
       "additionalProperties": true
     },
-    "canon": {
+    "chapter": {
       "type": "object",
       "required": [
-        "rootDir"
+        "chapterId",
+        "file",
+        "order",
+        "title",
+        "summary",
+        "status",
+        "wordCount",
+        "objective",
+        "scenes"
       ],
       "properties": {
-        "rootDir": {
+        "chapterId": {
           "type": "string"
         },
-        "cardFormat": {
+        "file": {
           "type": "string"
+        },
+        "volumeId": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "wordCount": {
+          "type": "integer"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "lastEditedAt": {
+          "type": "string"
+        },
+        "scenes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scene"
+          }
         }
       },
       "additionalProperties": true
     },
-    "runtime": {
+    "scene": {
       "type": "object",
-      "additionalProperties": true
-    },
-    "policies": {
-      "type": [
-        "object",
-        "array"
+      "required": [
+        "sceneId",
+        "order",
+        "title",
+        "goal",
+        "status"
       ],
-      "additionalProperties": true
-    },
-    "metadata": {
-      "type": "object",
+      "properties": {
+        "sceneId": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
       "additionalProperties": true
     }
   },

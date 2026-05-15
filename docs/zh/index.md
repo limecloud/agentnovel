@@ -1,69 +1,45 @@
 ---
 layout: home
 title: Agent Novel
-description: 面向 Agent 的长篇小说工作台标准。
+description: 面向长篇小说 AI Agent 的创作系统标准。
 
 hero:
   name: Agent Novel
-  text: 面向 Agent 的长篇小说工作台标准。
-  tagline: "把小说正文、设定、修订、发布、证据和代理任务拆成可维护、可审计、可回写的协议。"
+  text: 长篇小说 Agent 创作系统标准。
+  tagline: "不是提示词壳，而是把一部小说持续写完、修完、发出去的项目、记忆、代理和回写协议。"
   actions:
     - theme: brand
       text: 阅读规范
       link: /zh/specification
     - theme: alt
-      text: 作者快速开始
-      link: /zh/authoring/quickstart
+      text: 长篇写作闭环
+      link: /zh/authoring/long-form-writing-loop
     - theme: alt
-      text: LLM 完整上下文
-      link: ../llms-full.txt
+      text: 运行时工具
+      link: /zh/contracts/runtime-tools
 
 features:
-  - title: 作品优先
-    details: "正文、设定、修订、导出是作品事实源；对话只是交互方式，不是小说资产模型。"
-  - title: 代理可协作
-    details: "项目总控、章节、设定、知识、拆书、修订、发布代理有清晰任务边界。"
-  - title: 提议先行
-    details: "AI 结果默认先形成 proposal、evidence 和 approval，再由作者显式应用。"
-  - title: 本地优先
-    details: "作者资产保存在可见文件系统中，索引、缓存、embedding 和日志尽量可重建。"
-  - title: 上下文可追踪
-    details: "每次模型调用都能解释选入、遗漏、压缩和缺失的章节、设定、参考与修订事实。"
-  - title: 生态协同
-    details: "Novel 只定义小说工作台协议，与 Runtime、UI、Knowledge、Artifact、Evidence、Policy 分层。"
+  - title: 真实小说流程
+    details: "覆盖章节目标、场景节拍、人物状态、伏笔、信息差、修订和发布，而不是泛写作 prompt。"
+  - title: 项目长期记忆
+    details: "raw、compiled、canon、manuscript、outputs 与 .lime 分层，支撑长期上下文。"
+  - title: 代理受控回写
+    details: "工具读取、proposal 保存、issue 写入、approval 展示、apply 才改正文。"
+  - title: 对齐实现
+    details: "对齐 lime-novel 的 surface、agent type、DTO、live tools、AgentFeed 和 runtime diagnostics。"
 ---
 
-## Agent Novel 定义什么
+## 重点入口
 
-| 契约 | 回答的问题 |
-| --- | --- |
-| 项目包 | 一个长篇小说项目应该怎样存储、迁移和被 Agent 读取？ |
-| 作品事实源 | 哪些文件是正文、设定、修订、发布的权威来源？ |
-| 上下文解析 | 每次任务如何选择、压缩、注入和追踪小说上下文？ |
-| 代理任务 | 不同写作代理可以读取什么、提出什么、回写什么？ |
-| 审批闭环 | 哪些结果必须人工确认，如何记录风险和证据？ |
-| 运行时事件 | 如何记录 proposal、evidence、approval、asset update 和 export？ |
-| UI 投影 | 工作台怎样展示任务、提议、证据、差异和导出？ |
-| 生态互操作 | Novel 与 Skills、Knowledge、Runtime、UI 等标准如何分清边界？ |
-
-## 快速入口
-
-- [什么是 Agent Novel？](./what-is-agent-novel.md)
-- [最新规范](./specification.md)
-- [作者快速开始](./authoring/quickstart.md)
-- [客户端运行时标准](./client-implementation/runtime-standard.md)
-- [项目包协议](./contracts/project-package.md)
-- [上下文解析](./contracts/context-resolution.md)
-- [代理工作流](./contracts/agent-workflows.md)
-- [运行时事件](./contracts/runtime-events.md)
-- [评审与审批](./contracts/review-and-approval.md)
-- [产物与导出](./contracts/artifact-export.md)
-- [安全与策略](./contracts/security-policy.md)
-- [JSON Schemas](./reference/json-schemas.md)
-- [完整项目示例](./examples/complete-project.md)
-
-## 面向 AI 客户端
-
-- [llms.txt](../llms.txt)：简洁导航索引。
-- [llms-full.txt](../llms-full.txt)：当前核心文档合集。
-- [llm.txt](../llm.txt) 与 [llm-full.txt](../llm-full.txt)：兼容别名。
+- [规范](./specification.md)
+- [长篇写作闭环](./authoring/long-form-writing-loop.md)
+- [章节与场景模型](./contracts/chapter-scene-model.md)
+- [连续性与记忆契约](./contracts/continuity-memory.md)
+- [知识编译层](./contracts/knowledge-compilation.md)
+- [写作质量信号](./contracts/writing-quality-signals.md)
+- [Live Agent Runtime](./contracts/live-agent-runtime.md)
+- [运行时工具契约](./contracts/runtime-tools.md)
+- [Agent Feed 投影](./contracts/agent-feed-projection.md)
+- [写作工作面](./surfaces/writing.md)
+- [发布工作面](./surfaces/publish.md)
+- [Lime Novel 来源分析](./reference/lime-novel-source-analysis.md)

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/revision-record.schema.json",
+  "title": "Revision Record",
+  "type": "object",
+  "required": [
+    "recordId",
+    "proposalId",
+    "chapterId",
+    "status",
+    "snapshotPath",
+    "createdAt"
+  ],
+  "properties": {
+    "recordId": {
+      "type": "string"
+    },
+    "proposalId": {
+      "type": "string"
+    },
+    "chapterId": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "beforePreview": {
+      "type": "string"
+    },
+    "afterPreview": {
+      "type": "string"
+    },
+    "sourceSurface": {
+      "type": "string"
+    },
+    "linkedIssueId": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "applied",
+        "undone"
+      ]
+    },
+    "canUndo": {
+      "type": "boolean"
+    },
+    "snapshotPath": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "undoneAt": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limecloud.github.io/agentnovel/schemas/knowledge-document.schema.json",
+  "title": "Novel Knowledge Document",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "bucket",
+    "kind",
+    "status",
+    "relativePath"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "bucket": {
+      "type": "string",
+      "enum": [
+        "raw",
+        "compiled",
+        "canon",
+        "output"
+      ]
+    },
+    "kind": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "relativePath": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "related": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "updatedAt": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
